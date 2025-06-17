@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moon & Star</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      height: 100vh;
+      width: 100%;
+      background: #0a0a0a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+    }
+
+    .bg-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .bg-photo {
+      position: absolute;
+      width: calc(100% + 20px);
+      height: calc(100% + 20px);
+      left: -10px;
+      top: -10px;
+      object-fit: cover;
+      opacity: 0.25;
+      transition: opacity 2s ease-in-out;
+      -webkit-mask-image: radial-gradient(circle at center, white 90%, transparent 100%);
+      mask-image: radial-gradient(circle at center, white 90%, transparent 100%);
+    }
+
+    .bg-photo:nth-child(2) {
+      opacity: 0;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 20px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(255, 221, 225, 0.3);
+      white-space: nowrap;
+    }
+
+    .input-container {
+      position: relative;
+      display: inline-block;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    #magic-input {
+      display: inline-block;
+      min-width: 4ch;
+      border: none;
+      outline: none;
+      color: #ffdde1;
+      font-size: 3rem;
+      font-family: 'Great Vibes', cursive;
+      background: transparent;
+      caret-color: #ffadc6;
+      padding: 0;
+      vertical-align: baseline;
+      text-align: center;
+      letter-spacing: 0.6ch;
+    }
+
+    #magic-input:empty::before {
+      content: "____";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: rgba(255, 255, 255, 0.7);
+      animation: blink 1.5s ease infinite;
+      pointer-events: none;
+      letter-spacing: 0.6ch;
+    }
+
+    .message-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .message-box {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      color: #ffadc6;
+      font-size: 1rem;
+      max-width: 300px;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .message-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 0.2; }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .heart {
+      position: absolute;
+      opacity: 0;
+      font-size: 1.2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Images -->
+  <div class="bg-container">
+    <img class="bg-photo" src="photos/2025_06_08_18_41_IMG_7474.JPG" alt="Romantic background 1">
+    <img class="bg-photo" src="photos/IMG_20240115_021407.jpg" alt="Romantic background 2">
+    <div class="overlay"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>You Are My <span class="input-container"><span id="magic-input" contenteditable="true" spellcheck="false"></span></span></h1>
+  </div>
+
+  <!-- Message Box at Bottom -->
+  <div class="message-container">
+    <div class="message-box" id="message">
+      Type in your 4-letter password to watch our journey 💖
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('magic-input');
+    const message = document.getElementById('message');
+    const bgPhotos = document.querySelectorAll('.bg-photo');
+    let currentBg = 0;
+
+    // Focus the input automatically
+    input.focus();
+
+    // Background image cycling
+    function cycleBackground() {
+      bgPhotos[currentBg].style.opacity = 0;
+      currentBg = (currentBg + 1) % bgPhotos.length;
+      bgPhotos[currentBg].style.opacity = 0.25;
+      setTimeout(cycleBackground, 3000);
+    }
+    setTimeout(cycleBackground, 3000);
+
+    // Create floating hearts
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.top = Math.random() * 100 + 'vh';
+      heart.style.opacity = '0';
+      heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      document.body.appendChild(heart);
+      
+      // Fade in
+      setTimeout(() => {
+        heart.style.opacity = '0.7';
+        heart.style.transition = 'opacity 1s ease';
+      }, 100);
+      
+      // Remove after animation
+      setTimeout(() => {
+        heart.style.opacity = '0';
+        setTimeout(() => heart.remove(), 1000);
+      }, 5000);
+    }
+    
+    // Create occasional hearts
+    setInterval(createHeart, 1000);
+
+    input.addEventListener('input', (e) => {
+      // Get the typed text and remove any formatting or extra spaces
+      let typed = input.innerText.replace(/[\n\r\s]+/g, '').toLowerCase();
+      
+      // If text was pasted or otherwise exceeds length
+      if (typed.length > 4) {
+        typed = typed.slice(0, 4);
+      }
+      
+      // Update the displayed text
+      input.innerText = typed;
+      
+      // Move cursor to end
+      const range = document.createRange();
+      range.selectNodeContents(input);
+      range.collapse(false);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      if (typed.length === 4) {
+        if (typed === 'moon') {
+          message.innerHTML = "Welcome, my moon✨<br>Taking you to our special place...";
+          input.style.color = "#a5f8d3";
+          createHeartsBurst();
+          setTimeout(() => {
+            window.location.href = "deepseek_html_20250518_2ceb33.html";
+          }, 1500);
+        } else {
+          message.innerHTML = "Almost there... try again, my love 💕";
+          input.style.animation = "shake 0.5s";
+          setTimeout(() => {
+            input.style.animation = "";
+          }, 500);
+        }
+      } else {
+        message.innerHTML = "Type in your 4-letter password<br>to watch our journey 💖";
+      }
+    });
+
+    // Prevent line breaks when pressing Enter
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
+
+    // Heart burst animation for success
+    function createHeartsBurst() {
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('heart');
+          heart.innerHTML = ['❤️', '💖', '💗', '💓', '💘'][Math.floor(Math.random() * 5)];
+          heart.style.left = '50%';
+          heart.style.top = '50%';
+          heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+          heart.style.opacity = '0';
+          document.body.appendChild(heart);
+          
+          // Position and animate
+          setTimeout(() => {
+            heart.style.opacity = '1';
+            heart.style.transform = `translate(
+              ${(Math.random() - 0.5) * 200}px,
+              ${(Math.random() - 0.5) * 200}px
+            ) scale(${Math.random() * 0.5 + 0.5})`;
+            heart.style.transition = `all ${Math.random() * 0.5 + 0.5}s ease-out`;
+          }, 10);
+          
+          // Fade out
+          setTimeout(() => {
+            heart.style.opacity = '0';
+            setTimeout(() => heart.remove(), 1000);
+          }, 1000);
+        }, i * 100);
+      }
+    }
+
+    // Add shake animation for incorrect attempts
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-5px); }
+        40% { transform: translateX(5px); }
+        60% { transform: translateX(-5px); }
+        80% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

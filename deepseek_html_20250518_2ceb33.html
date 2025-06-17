@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's OUR STORY</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9250/9250015.png" type="image/png">
+
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Romantic Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #5d5fef;
+            --secondary-color: #638dff;
+            --accent-color: #7abce5;
+            --text-color: #e0e0e0;
+            --light-bg: #1a1a2e;
+            --dark-bg: #0f0f1a;
+            --happy-bg: #16213e;
+            --rainbow-gradient: linear-gradient(
+                to right,
+                #ff0000 0%,
+                #ff7f00 14%,
+                #ffff00 28%,
+                #00ff00 42%,
+                #0000ff 56%,
+                #4b0082 70%,
+                #9400d3 84%,
+                #ff0000 100%
+            );
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-color: #0a0a1a;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Romantic Title Font */
+        .romantic-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        }
+
+        .romantic-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Lantern Background */
+        .lantern-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #0a0a1a 0%, #1a1a3a 50%, #2a2a5a 100%);
+            transition: all 1s ease;
+        }
+
+        .lantern {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: radial-gradient(circle at center, #ffdd59 0%, #ff9f1c 70%, transparent 100%);
+            border-radius: 50% 50% 5px 5px;
+            box-shadow: 0 0 20px #ffdd59, 0 0 40px rgba(255, 221, 89, 0.5);
+            opacity: 0.8;
+            animation: float-up 15s linear infinite;
+            z-index: 1;
+        }
+
+        .lantern:before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 10px;
+            background: linear-gradient(to bottom, #ff9f1c, #ff6b6b);
+            border-radius: 0 0 5px 5px;
+        }
+
+        .lantern:after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 5px;
+            background: #ff6b6b;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+             0%, 100% { opacity: 0; }
+              50% { opacity: 1; }
+        }
+
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) rotate(10deg);
+                opacity: 0;
+            }
+        }
+
+        /* Dark Period Lanterns */
+        .dark-period .lantern-scene {
+            background: linear-gradient(to bottom, #050509 0%, #0a0a12 50%, #0f0f1a 100%);
+        }
+
+        .dark-period .lantern {
+            opacity: 0.2;
+            box-shadow: 0 0 10px #ffdd59, 0 0 20px rgba(255, 221, 89, 0.2);
+        }
+
+        /* Happy Period Lanterns */
+        .happy-period .lantern-scene {
+            background: linear-gradient(to bottom, #0a0a1a 0%, #1a1a3a 50%, #2a2a5a 100%);
+        }
+
+        .happy-period .lantern {
+            opacity: 0.9;
+            box-shadow: 0 0 25px #ffdd59, 0 0 50px rgba(255, 221, 89, 0.7);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 105, 180, 0.15);
+            transform: rotate(45deg);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart:before, .heart:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 105, 180, 0.15);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+
+        @keyframes float {
+            0% {
+                transform: rotate(45deg) translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: rotate(45deg) translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .journey-container {
+            position: relative;
+            padding: 50px 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .path {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--primary-color),
+                var(--primary-color) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+
+        .memory {
+            position: relative;
+            margin-bottom: 60px;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .memory.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .memory-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            filter: brightness(0.95);
+        }
+
+        .memory-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            filter: brightness(1.05);
+        }
+
+        .memory-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            border: 4px solid var(--light-bg);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .memory-content {
+            background-color: rgba(30, 30, 60, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .memory-content:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(30, 30, 60, 0.7);
+            top: 30px;
+            transform: rotate(45deg);
+            backdrop-filter: blur(5px);
+        }
+
+        .memory-left .memory-content:before {
+            right: -10px;
+        }
+
+        .memory-right .memory-content:before {
+            left: -10px;
+        }
+
+        .memory-left {
+            padding-right: 50%;
+            text-align: right;
+        }
+
+        .memory-right {
+            padding-left: 50%;
+            text-align: left;
+        }
+
+        .memory-title {
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+        }
+
+        .memory-date {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .memory-desc {
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        .no-image-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            border: 4px solid var(--light-bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer p {
+            margin-bottom: 0;
+        }
+
+        .floating-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .dark-marker {
+            background-color: #ff4d4d !important;
+        }
+
+        /* Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background-color: rgba(30, 30, 60, 0.8);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            transform: scale(1.1);
+            background-color: rgba(93, 95, 239, 0.8);
+        }
+
+        .music-player i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Hidden Audio Element */
+        #bgMusic {
+            display: none;
+        }
+
+        /* Surprise Button */
+        .surprise-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-family: 'Dancing Script', cursive;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .surprise-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        /* Message Card */
+        .message-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 90%;
+            max-width: 500px;
+            background: linear-gradient(135deg, #fff5f5, #ffecec);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Dancing Script', cursive;
+            color: #333;
+            text-align: center;
+            display: none;
+        }
+
+        .message-card.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            display: block;
+        }
+
+        .message-card h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+
+        .message-card p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .close-message {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .path {
+                left: 30px;
+            }
+            
+            .memory {
+                padding-left: 70px !important;
+                padding-right: 20px !important;
+                text-align: left !important;
+            }
+            
+            .memory-content:before {
+                left: -10px !important;
+                right: auto !important;
+            }
+            
+            .memory-marker, .no-image-marker {
+                left: 30px !important;
+            }
+            
+            .memory-image {
+                width: 100%;
+                height: auto;
+                max-height: 300px;
+            }
+
+            .romantic-title {
+                font-size: 2.5rem;
+            }
+
+            .romantic-subtitle {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 💖 Romantic Audio Player Section -->
+    <div id="audio-section" style="text-align: center; padding: 80px 20px 40px;">
+          <h2 style="font-family: 'Segoe UI', sans-serif; color: #ffd1dc; font-size: 1.8rem; margin-bottom: 20px;">
+            🎁 A little present for you...<br>
+            Let this song guide you through every single memory we made together💫<br>
+            Play it & watch our journey💖
+          </h2>
+
+     <div style="
+        display: inline-block;
+        background: #1a1a2e;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 105, 180, 0.2);
+      ">
+        <iframe
+          src="https://archive.org/embed/a-thousand-years-speed-up"
+          width="400"
+          height="60"
+          frameborder="0"
+          allow="autoplay"
+          style="border-radius: 10px; border: none;"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- Lantern Background Scene -->
+    <div class="lantern-scene" id="lanternScene"></div>
+    <div id="hearts-container"></div>
+    
+    <header class="header">
+        <h1 class="romantic-title">Story of a Moon and a Star</h1>
+        <h2 class="romantic-subtitle">Our Journey Together</h2>
+        <p><i>"Late-night whispers turned into forever"</i></p>
+    </header>
+    
+    <div class="journey-container">
+        <div class="path"></div>
+        
+        <!-- Happy Period Memories -->
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-times" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">When We Had A Crush On Each Other</h3>
+                <p class="memory-date">Jan 2023 - Sooriyakanda</p>
+                <img src="https://i.postimg.cc/sXfcwL7K/IMG-20230116-094710-2.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">The days when our eyes started contact and our story began. Little did we know this chance encounter would change our lives...</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-right">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">First Love Letters</h3>
+                <p class="memory-date">March 2023</p>
+                <img src="https://i.postimg.cc/rmVh33GK/331622121-508729754795540-1572049516273367857-n.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">Don't wanna lie, I was super scared before I sent you the letter. But as I wished, U sent me a reply... And that was the time which made some sense. Btw, we couldn't reach each other til June :]</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">❤️DAY THAT CHANGED EVERYTHING❤️</h3>
+                <p class="memory-date">June 25, 2023 - KANDY</p>
+                <img src="https://i.postimg.cc/cJ3MxnNq/IMG-20230627-084049.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">Started our conversation just by exchanging a wrist band.. Don't know how to explain this day cuz the words aren't enough!!!! Still remember every single word we spoke that night, and I hope you will remember too...</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">First "I Love You❤️"</h3>
+                <p class="memory-date">July 23, 2023</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">First Time We Held Our Hands</h3>
+                <p class="memory-date">July 30, 2023 - Jaffna</p>
+                <img src="https://i.postimg.cc/Bnj79bYD/Snapchat-426078443.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">Though you were sleeping on our first day, I was holding your hand along the whole night... but on this day you took my hand and held it so tightly, just as I wished</p>
+            </div>
+        </div>
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Sneakin' Around😂</h3>
+                <p class="memory-date">Oct 01, 2023</p>
+                <img src="https://i.postimg.cc/FHVtJCdc/IMG-20240113-WA0048.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">We were like Romeo & Juliet lol😂... You were there in the balcony and we both were staring at each other for a little while❤️</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Cinema Night</h3>
+                <p class="memory-date">Nov 25, 2023</p>
+                <p class="memory-desc">I'd been watching you all night!!! It was almost 5 months for our relationship then...</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">My Christmas Vish🎄✨</h3>
+                <p class="memory-date">Dec 28, 2023</p>
+                <img src="https://i.postimg.cc/bJR4ZV2k/IMG-20231229-010410.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">Got together at my house for Christmas, and I was able to see my own Christmas Vish😉🎄</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">First Hug❤️</h3>
+                <p class="memory-date">Jan 14, 2024 - Ella</p>
+                <img src="https://i.postimg.cc/nVm4q7sC/IMG-20240115-021555.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">New Year, New try nah??🌝 ;)</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="no-image-marker">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Caught Up for the First Time🥲💔</h3>
+                <p class="memory-date">Feb 16, 2024</p>
+                <p class="memory-desc">Remember when your mom caught up some chats you sent to me using your seeya's phone... This is when everything began to go wrong💔</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Caught Up for Second Time💔</h3>
+                <p class="memory-date">March, 2024</p>
+                <p class="memory-desc">Your dad saw some tiktoks on our chat and things started to get kinda chaotic😭 Remember we couldn't chat as we used to do and drifted a little bit aparted from each other.. Don't wanna lie I'm still scared of those Days😖</p>
+            </div>
+        </div>
+
+
+        <!-- Approaching Dark Period -->
+        
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Together again after a Little While</h3>
+                <p class="memory-date">April 22, 2024 - Deniyaya</p>
+                <img src="https://i.postimg.cc/4xXCgh2m/IMG-20240422-150336.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">After some silent nights, we got each others' back again... Yoo this was the only trip we acted so innocently. Also the last time together before we broke up🥲</p>
+            </div>
+        </div>
+        
+        <!-- Dark Period Memories -->
+        <div class="memory memory-right">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">The Dark Season Begins😭</h3>
+                <p class="memory-date">May 7, 2024</p>
+                <p class="memory-desc">The day everything changed. Caught in an SMS chat, but managed to be together though we're forced to be apart🥹</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-left">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">On Your Bday!!!</h3>
+                <p class="memory-date">May 30, 2024</p>
+                <p class="memory-desc">Remember I came to see you on your birthday???🥹</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-right">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">1 Year Anniversary❤️‍🩹</h3>
+                <p class="memory-date">June 25, 2024</p>
+                <p class="memory-desc">Celebrated Our 1 Year Anniversary, a little bit peacefully..</p>
+            </div>
+        </div>
+
+                <div class="memory memory-left">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-cloud-rain"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">HARDEST GOODBYE😭😭</h3>
+                <p class="memory-date">July 24, 2024</p>
+                <p class="memory-desc">Don't  wanna talk about those times... Just some BAD DAYS! :(</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-right">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-cloud-rain"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Silent Days😖</h3>
+                <p class="memory-date">Aug - December 2024</p>
+                <p class="memory-desc">Rare messages & Lonely moments... The time we exchanged some little gifts we planned to give before😖</p>
+            </div>
+        </div>
+
+                <div class="memory memory-left">
+            <div class="no-image-marker dark-marker">
+                <i class="fas fa-cloud-rain"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">First Meet After the Break Up❤️‍🩹</h3>
+                <p class="memory-date">Sep 21, 2024</p>
+                <p class="memory-desc">How many things we had to talk on that night nah?? but we were not the same at all right, we both knew it...😖 You said I've changed, and yes I may have, but my feelings were the same. Btw, u gave me the wrist band on this day</p>
+            </div>
+        </div>
+
+        <!-- Reconciliation Period -->
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Love Again???❤️‍🩹</h3>
+                <p class="memory-date">Dec 15, 2024</p>
+                <img src="https://i.postimg.cc/d3CTF0tV/2024-12-16-08-34-IMG-3083.jpg" alt="Reunion" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">After months of silence, your voice again... Started to hangout oftenly again❤️‍🩹</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-rainbow"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Rebuilding Trust!❤️‍🩹</h3>
+                <p class="memory-date">Dec 26, 2024</p>
+                <img src="photos\2024_12_26_11_40_IMG_3429.JPG" class="memory-image img-fluid">
+                <p class="memory-desc">Started to share our lives again after the long separation, and you gave hints about starting the affair again while you were away in Galle... And I'll always remember the snap u sent me wearing the necklace I gave🥹</p>
+            </div>
+        </div>
+        
+        <div class="memory memory-left">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">MINE AGAIN!!!!❤️</h3>
+                <p class="memory-date">Jan 1, 2025</p>
+                <p class="memory-desc">Wished me on my Bday saying "HAPPY BDAY LOVE❤️", and started the affair again... never gonna forget this day.. ;)</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">FIRST KISS💕</h3>
+                <p class="memory-date">Jan 20, 2025 - Dambulla</p>
+                <img src="https://i.postimg.cc/KctVcSp1/2025-01-20-00-07-IMG-4578.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">HAD OUR VERY FIRST KISS... Don't wanna lie, your lips are so kissableeeee🥹❤️</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Video Call After A Long Time</h3>
+                <p class="memory-date">Jan 30, 2025</p>
+                <img src="photos\2025_01_30_14_27_IMG_4967.PNG" class="memory-image img-fluid">
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Valentinesss❤️</h3>
+                <p class="memory-date">Feb 14, 2025</p>
+                <p class="memory-desc">Day I gave u two keytags and your name was on it (Also we had an unforgettable argument right😂)</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Came to See You on SportsMeet</h3>
+                <p class="memory-date">Feb 20, 2025</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Hanging Out in the Bus</h3>
+                <p class="memory-date">April 03, 2025</p>
+                <p class="memory-desc">Planned and just met in a bus😂 Never thought it would be that easy🥹</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">BACKDOOR KISSES😚</h3>
+                <p class="memory-date">April 19, 2025</p>
+                <img src="https://i.postimg.cc/jdTyTfk8/Whats-App-Image-2025-05-15-at-11-50-06.jpg" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">Kinda tasted each others' toungues for the first time ever nah😂❤️... Still feel like that 2-3 minutes were a miracle happened that night😭</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">On Your Birthday❤️</h3>
+                <p class="memory-date">May 30, 2025</p>
+                <p class="memory-desc">Day you got a guitar as your Bday gift🥳</p>
+            </div>
+        </div>
+
+        <div class="memory memory-left">
+            <div class="memory-marker">
+                <i class="fas fa-heart" style="color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.8rem;"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">Our INFINITY in that one Eve🥹💕</h3>
+                <p class="memory-date">June 08, 2025 - 18:43 - Belihul Oya</p>
+                <img src="photos\2025_06_08_18_40_IMG_7472.JPG" class="memory-image img-fluid">
+                <p class="memory-desc mt-3">We kissed like we could hide inside each other’s lips, like the world stopped just to watch us🥹. I don't even know how many times we did kiss cuz it was uncountable... Hugged, tangled, lost in each others' eyes just as I prayed the day before✨💫 I swear, I’m counting the days until I get to live that moment again... Just ME, U & THE MOON🌝💖</p>
+            </div>
+        </div>
+
+        <div class="memory memory-right">
+            <div class="no-image-marker">
+                <i class="fas fa-heart"></i>
+            </div>
+            <div class="memory-content">
+                <h3 class="memory-title">❤️2 YEARS ANNIVERSARY❤️</h3>
+                <p class="memory-date">June 25, 2025</p>
+                <p class="memory-desc">We celebrate 2 years of our love today. We've came a long way through the light and dark nah? Also we have a much bigger way to go ahead. I made on a promise once, 2 years ago on this day❤️You know that I never gonna break it right. And U'll be my only one love til my last breath❤️. So please don't let go again because that's the only thing I'm scared of RN🥹 One day I'ma make your world the best of bests so just hold on with me cuz I know that nothing can change my love for you</p>
+            </div>
+        </div>
+    </div>
+        
+        <!-- Surprise Button at the end -->
+        <button class="surprise-btn" id="surpriseBtn">A Little Note For You❤️</button>
+    </div>
+
+    <!-- Message Card (hidden by default) -->
+    <div class="overlay" id="overlay"></div>
+    <div class="message-card" id="messageCard">
+        <button class="close-message" id="closeMessage">&times;</button>
+        <h3>To My BUNNY🐰</h3>
+        <p>As i always say, EVERYTHING'S GONNA BE ALRIGHT and NO MATTER WHAT HAPPENS, I'M ALWAYS HERE FOR U right🥹</p>
+        <p>YOU'LL ALWAYS BE 'MERI AASHIQUE'🌙❤️ HAPPY ANNIVERSARY MY LOVE, I LOVE U SO MUCH SUDUUU</p>
+        <p>With all my love, FORVER & AGAIN</p>
+    </div>
+    <footer class="footer">
+        <p>Even when the NIGHT CHANGES, it will never change<br> ME & YOU❤️</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        // Create floating lanterns
+        function createLanterns() {
+            const container = document.getElementById('lanternScene');
+            if (!container) return;
+            
+            // Clear existing lanterns
+            container.innerHTML = '';
+            
+            // Create 50 lanterns with random positions and animations
+            for (let i = 0; i < 50; i++) {
+                const lantern = document.createElement('div');
+                lantern.className = 'lantern';
+                lantern.style.left = Math.random() * 100 + 'vw';
+                lantern.style.animationDuration = (10 + Math.random() * 20) + 's';
+                lantern.style.animationDelay = Math.random() * 15 + 's';
+                lantern.style.width = (20 + Math.random() * 20) + 'px';
+                lantern.style.height = (30 + Math.random() * 30) + 'px';
+                container.appendChild(lantern);
+            }
+        }
+
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            if (!container) return;
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = Math.random() * 100 + 'vh';
+                heart.style.animation = `float ${8 + Math.random() * 12}s linear infinite`;
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.width = (10 + Math.random() * 20) + 'px';
+                heart.style.height = heart.style.width;
+                container.appendChild(heart);
+            }
+        }
+
+        function createStars() {
+            const container = document.getElementById('lanternScene');
+
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(star);
+            }
+        }
+
+
+        // Background Timeline Controller
+        function updateBackgroundForTimeline() {
+            const lanternScene = document.getElementById('lanternScene');
+            
+            // Get current scroll position relative to timeline
+            const timelineStart = document.querySelector('.journey-container').offsetTop;
+            const timelineHeight = document.querySelector('.journey-container').scrollHeight;
+            const scrollPosition = window.scrollY - timelineStart;
+            const scrollPercent = Math.min(Math.max(scrollPosition / timelineHeight, 0), 1);
+            
+            // Define timeline segments (adjust these percentages based on your actual content)
+            const darkStart = 0.6; // When dark period starts (July 2024)
+            const darkEnd = 0.75;  // When dark period ends (December 2024)
+            const rainbowStart = darkEnd;
+            const rainbowEnd = 0.9; // When rainbow fades out
+            
+            if (scrollPercent < darkStart) {
+                // Happy period (before July 2024)
+                lanternScene.classList.remove('dark-period', 'happy-period');
+            } 
+            else if (scrollPercent >= darkStart && scrollPercent < darkEnd) {
+                // Dark period (July 2024 - December 2024)
+                lanternScene.classList.add('dark-period');
+                lanternScene.classList.remove('happy-period');
+            } 
+            else if (scrollPercent >= darkEnd && scrollPercent < rainbowEnd) {
+                // Reconciliation period (December 2024 onwards)
+                lanternScene.classList.remove('dark-period');
+                lanternScene.classList.add('happy-period');
+            } 
+            else {
+                // After rainbow fades (June 2025 onwards)
+                lanternScene.classList.remove('dark-period', 'happy-period');
+            }
+        }
+
+        // Surprise Message Card
+        const surpriseBtn = document.getElementById('surpriseBtn');
+        const messageCard = document.getElementById('messageCard');
+        const overlay = document.getElementById('overlay');
+        const closeMessage = document.getElementById('closeMessage');
+
+        surpriseBtn.addEventListener('click', function() {
+            messageCard.classList.add('show');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeMessage.addEventListener('click', function() {
+            messageCard.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+
+        overlay.addEventListener('click', function() {
+            messageCard.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create lanterns and hearts
+            createLanterns();
+            createHearts();
+            createStars();
+            
+            // Initialize scroll listener
+            updateBackgroundForTimeline();
+            window.addEventListener('scroll', updateBackgroundForTimeline);
+            
+            // Memory visibility
+            const memories = document.querySelectorAll('.memory');
+            function checkVisibility() {
+                memories.forEach(memory => {
+                    const memoryTop = memory.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (memoryTop < windowHeight - 100) {
+                        memory.classList.add('visible');
+                    }
+                });
+            }
+            
+            checkVisibility();
+            window.addEventListener('scroll', checkVisibility);
+        });
+    </script>
+</body>
+</html>
