@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's OUR STORY - v4.0</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9250/9250015.png" type="image/png">
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #f59e0b;
+            --gold-light: #fcd34d;
+            --gold-dark: #b45309;
+            --bg-deep: #020617;
+            --bg-card: rgba(255,255,255,0.03);
+            --border-subtle: rgba(255,255,255,0.06);
+            --text-primary: #fef3c7;
+            --text-secondary: #d4a574;
+            --text-muted: rgba(254,243,199,0.5);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family:'Inter',sans-serif;
+            background:var(--bg-deep);
+            color:var(--text-primary);
+            overflow-x:hidden;
+            min-height:100vh;
+        }
+
+        /* =========================================================
+           1. PASSWORD SCREEN — 3-D PERSPECTIVE DESIGN
+        ========================================================= */
+        .password-screen {
+            position:fixed; inset:0; z-index:1000;
+            display:flex; align-items:center; justify-content:center;
+            perspective:1200px;
+            background:radial-gradient(ellipse at 30% 50%, #0d0b2e 0%, #020617 70%);
+            transition:opacity 1.2s ease, visibility 1.2s ease;
+            overflow:hidden;
+        }
+        .password-screen.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+
+        /* floating particles behind card */
+        .pw-particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+        .pw-particle {
+            position:absolute; border-radius:50%;
+            animation:pwFloat linear infinite;
+        }
+
+        @keyframes pwFloat {
+            0%   { transform:translateY(110vh) scale(0.4); opacity:0; }
+            10%  { opacity:1; }
+            90%  { opacity:0.6; }
+            100% { transform:translateY(-20vh) scale(1); opacity:0; }
+        }
+
+        /* 3-D tilt wrapper */
+        .pw-scene {
+            width:min(520px, 92vw);
+            transform-style:preserve-3d;
+            animation:sceneTilt 8s ease-in-out infinite;
+        }
+        @keyframes sceneTilt {
+            0%,100% { transform:rotateX(3deg) rotateY(-4deg); }
+            25%      { transform:rotateX(-2deg) rotateY(5deg); }
+            50%      { transform:rotateX(4deg) rotateY(2deg); }
+            75%      { transform:rotateX(-3deg) rotateY(-5deg); }
+        }
+
+        .password-container {
+            text-align:center;
+            padding:3.5rem 3rem;
+            background:rgba(10,8,35,0.75);
+            border:1px solid rgba(252,211,77,0.18);
+            border-radius:2.5rem;
+            backdrop-filter:blur(30px);
+            box-shadow:
+                0 40px 80px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(252,211,77,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+            transform-style:preserve-3d;
+            position:relative;
+        }
+
+        /* Glossy top-edge shine */
+        .password-container::before {
+            content:'';
+            position:absolute; top:0; left:10%; right:10%;
+            height:1px;
+            background:linear-gradient(to right, transparent, rgba(252,211,77,0.5), transparent);
+            border-radius:50%;
+        }
+
+        /* floating icon */
+        .password-icon {
+            font-size:4.5rem;
+            display:block;
+            margin-bottom:1.4rem;
+            animation:iconFloat 3s ease-in-out infinite;
+            filter:drop-shadow(0 0 20px rgba(252,211,77,0.5));
+            transform:translateZ(40px);
+        }
+        @keyframes iconFloat {
+            0%,100% { transform:translateZ(40px) translateY(0); }
+            50%      { transform:translateZ(40px) translateY(-12px); }
+        }
+
+        .password-title {
+            font-family:'Playfair Display',serif;
+            font-size:clamp(2rem, 6vw, 3rem);
+            background:linear-gradient(135deg, #fef3c7 0%, #fcd34d 50%, #b45309 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            margin-bottom:0.4rem;
+            transform:translateZ(20px);
+            letter-spacing:-0.02em;
+        }
+
+        .password-tagline {
+            font-family:'Dancing Script', cursive;
+            font-size:1rem;
+            color:var(--text-muted);
+            margin-bottom:2rem;
+            transform:translateZ(15px);
+        }
+
+        /* lyric fill-in the blank */
+        .password-lyrics {
+            font-family:'Dancing Script',cursive;
+            font-size:1.25rem;
+            color:var(--text-secondary);
+            line-height:2.2;
+            margin-bottom:0.8rem;
+            font-style:italic;
+            transform:translateZ(10px);
+        }
+        .password-lyrics .blank {
+            display:inline-block;
+            width:140px;
+            border-bottom:2px dashed rgba(252,211,77,0.4);
+            color:var(--gold-light);
+            font-size:1.4rem;
+            padding:0 0.3rem;
+            transition:all 0.3s;
+        }
+        .password-lyrics .blank:focus { outline:none; border-bottom-color:var(--gold-light); border-bottom-style:solid; }
+
+        /* glowing input */
+        .pw-input-wrap {
+            position:relative; display:inline-block; margin-bottom:1.8rem;
+            transform:translateZ(25px);
+        }
+        .pw-input-wrap::before {
+            content:''; position:absolute; inset:-2px; border-radius:50px;
+            background:linear-gradient(135deg, rgba(252,211,77,0.3), transparent 60%, rgba(252,211,77,0.15));
+            opacity:0; transition:opacity 0.4s;
+            pointer-events:none;
+        }
+        .pw-input-wrap:focus-within::before { opacity:1; }
+
+        .password-input {
+            width:220px;
+            padding:0.9rem 1.2rem;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(252,211,77,0.2);
+            border-radius:50px;
+            color:var(--gold-light);
+            font-family:'Dancing Script',cursive;
+            font-size:1.6rem;
+            text-align:center;
+            outline:none;
+            transition:border-color 0.3s, box-shadow 0.3s;
+        }
+        .password-input:focus {
+            border-color:rgba(252,211,77,0.6);
+            box-shadow:0 0 25px rgba(252,211,77,0.12);
+        }
+        .password-input::placeholder { color:rgba(254,243,199,0.15); font-size:1.1rem; }
+
+        .password-btn {
+            display:block; width:100%;
+            padding:0.95rem 2rem;
+            background:linear-gradient(135deg, rgba(252,211,77,0.12), rgba(180,83,9,0.08));
+            border:1px solid rgba(252,211,77,0.3);
+            color:var(--gold-light);
+            font-family:'Playfair Display',serif;
+            font-size:1.05rem;
+            letter-spacing:0.12em;
+            border-radius:50px;
+            cursor:pointer;
+            transition:all 0.4s ease;
+            position:relative; overflow:hidden;
+            transform:translateZ(30px);
+        }
+        .password-btn::before {
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg, transparent, rgba(252,211,77,0.1), transparent);
+            transition:left 0.5s;
+        }
+        .password-btn:hover::before { left:100%; }
+        .password-btn:hover {
+            background:linear-gradient(135deg, rgba(252,211,77,0.18), rgba(180,83,9,0.14));
+            border-color:var(--gold-light);
+            box-shadow:0 0 40px rgba(252,211,77,0.18), 0 8px 30px rgba(0,0,0,0.3);
+            transform:translateZ(30px) translateY(-2px);
+        }
+
+        .password-error {
+            color:#ef4444; font-size:0.88rem;
+            min-height:1.4rem; margin-top:0.8rem;
+            font-style:italic; transform:translateZ(10px);
+        }
+
+        /* orbiting dots around the card */
+        .pw-orbit {
+            position:absolute; inset:-40px; pointer-events:none;
+            animation:orbitSpin 20s linear infinite;
+        }
+        @keyframes orbitSpin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+        .pw-orbit-dot {
+            position:absolute; width:6px; height:6px;
+            border-radius:50%; background:rgba(252,211,77,0.5);
+            filter:blur(1px);
+        }
+
+        /* =========================================================
+           2. VIDEO REVEAL  (no changes, keep same look)
+        ========================================================= */
+        .video-reveal {
+            position:fixed; inset:0; z-index:950;
+            background:rgba(0,0,0,0.96);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            gap:1.5rem; padding:2rem 1rem;
+            opacity:0; visibility:hidden;
+            transition:all 1s ease; overflow:hidden;
+        }
+        .video-reveal.active { opacity:1; visibility:visible; }
+
+        .video-container {
+            position:relative;
+            width:min(40vw,380px); max-height:75vh;
+            opacity:0; transform:scale(0.85) translateY(30px);
+            transition:all 1s cubic-bezier(0.16,1,0.3,1);
+            display:flex; flex-direction:column; align-items:center;
+        }
+        .video-container.active { opacity:1; transform:scale(1) translateY(0); }
+
+        @media (max-width:600px) {
+            .video-container { width:min(85vw,360px); max-height:65vh; }
+        }
+
+        .glow-border {
+            position:absolute; inset:-4px; border-radius:1.7rem;
+            background:linear-gradient(135deg,rgba(252,211,77,0.4),transparent 30%,transparent 70%,rgba(252,211,77,0.4));
+            z-index:-1; filter:blur(15px);
+        }
+
+        .story-video {
+            width:100%; max-height:70vh;
+            object-fit:contain; border-radius:1.5rem;
+            box-shadow:0 0 60px rgba(252,211,77,0.15); display:block;
+        }
+        @media (max-width:600px) { .story-video { max-height:60vh; border-radius:1rem; } }
+
+        .play-btn {
+            padding:0.85rem 3rem;
+            background:rgba(252,211,77,0.08);
+            border:1px solid rgba(252,211,77,0.4);
+            color:var(--gold-light);
+            font-family:'Dancing Script',cursive; font-size:1.8rem;
+            border-radius:50px; cursor:pointer; transition:all 0.4s;
+        }
+        .play-btn:hover {
+            background:rgba(252,211,77,0.15);
+            border-color:var(--gold-light);
+            box-shadow:0 0 40px rgba(252,211,77,0.2);
+            transform:translateY(-2px);
+        }
+
+        /* =========================================================
+           3. INSTAGRAM "INSTANT" FEELING CARDS
+        ========================================================= */
+        .cards-scene {
+            position:fixed; inset:0; z-index:870;
+            background:radial-gradient(ellipse at 50% 40%, #0d0520 0%, #020617 75%);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            opacity:0; visibility:hidden;
+            transition:opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .cards-scene.active { opacity:1; visibility:visible; }
+
+        /* stars canvas behind cards */
+        #cardsBg {
+            position:absolute; inset:0;
+            pointer-events:none; z-index:0;
+        }
+
+        .cards-label {
+            font-family:'Dancing Script',cursive;
+            font-size:1rem; color:rgba(252,211,77,0.4);
+            letter-spacing:0.15em; text-transform:uppercase;
+            margin-bottom:1rem; z-index:2; position:relative;
+        }
+
+        .cards-counter {
+            font-family:'Inter', sans-serif;
+            font-size:0.75rem; color:rgba(252,211,77,0.3);
+            letter-spacing:0.2em;
+            margin-top:1.5rem; z-index:2; position:relative;
+            transition:opacity 0.4s;
+        }
+
+        /* the stack area */
+        .card-stack-wrap {
+            position:relative;
+            width:min(360px, 88vw);
+            height:min(480px, 70vh);
+            z-index:2;
+            perspective:900px;
+            cursor:pointer;
+            /* tap hint */
+        }
+
+        /* individual feeling card */
+        .feeling-card {
+            position:absolute; inset:0;
+            background:linear-gradient(145deg, #0e0b2a, #120929);
+            border:1px solid rgba(252,211,77,0.18);
+            border-radius:2rem;
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            padding:3rem 2.5rem;
+            text-align:center;
+            box-shadow:
+                0 30px 60px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(252,211,77,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+            transform-origin:center bottom;
+            transition:transform 0.55s cubic-bezier(0.23,1,0.32,1), opacity 0.55s ease;
+            user-select:none;
+            -webkit-user-select:none;
+        }
+        /* top shimmer line */
+        .feeling-card::before {
+            content:''; position:absolute;
+            top:0; left:15%; right:15%; height:1px;
+            background:linear-gradient(to right, transparent, rgba(252,211,77,0.35), transparent);
+        }
+
+        /* stacked cards behind */
+        .feeling-card.stack-2 {
+            transform:translateY(14px) scale(0.94) rotate(1.5deg);
+            opacity:0.7;
+        }
+        .feeling-card.stack-3 {
+            transform:translateY(26px) scale(0.88) rotate(-2deg);
+            opacity:0.4;
+        }
+        .feeling-card.stack-4-plus {
+            transform:translateY(34px) scale(0.84) rotate(1deg);
+            opacity:0.2;
+        }
+
+        /* swipe away: card flies off to the left */
+        .feeling-card.swiping-out {
+            transform:translateX(-110vw) translateY(-20px) rotate(-20deg) !important;
+            opacity:0 !important;
+            transition:transform 0.5s cubic-bezier(0.55,0,1,0.45), opacity 0.4s ease;
+            pointer-events:none;
+        }
+
+        .card-emoji {
+            font-size:3.5rem; margin-bottom:1.5rem;
+            animation:cardEmojiPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes cardEmojiPulse {
+            0%,100% { transform:scale(1); }
+            50%      { transform:scale(1.1); }
+        }
+
+        .card-text {
+            font-family:'Dancing Script',cursive;
+            font-size:clamp(1.3rem, 3.5vw, 1.65rem);
+            color:var(--text-primary);
+            line-height:1.65;
+            font-style:italic;
+        }
+        .card-text em {
+            font-style:normal;
+            background:linear-gradient(to right, #fcd34d, #f59e0b);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+
+        .card-tap-hint {
+            position:absolute; bottom:1.6rem; left:50%; transform:translateX(-50%);
+            font-family:'Inter',sans-serif;
+            font-size:0.72rem; color:rgba(252,211,77,0.3);
+            letter-spacing:0.15em; text-transform:uppercase;
+            animation:hintPulse 2s ease-in-out infinite;
+            pointer-events:none;
+        }
+        @keyframes hintPulse {
+            0%,100% { opacity:0.3; } 50% { opacity:0.7; }
+        }
+
+        /* progress dots */
+        .card-dots {
+            display:flex; gap:0.5rem;
+            margin-top:1.2rem; z-index:2; position:relative;
+        }
+        .card-dot {
+            width:6px; height:6px; border-radius:50%;
+            background:rgba(252,211,77,0.2);
+            transition:all 0.4s;
+        }
+        .card-dot.active { background:rgba(252,211,77,0.85); transform:scale(1.3); }
+        .card-dot.done   { background:rgba(252,211,77,0.45); }
+
+        /* =========================================================
+           4. DRAG & DROP MOON → STAR SCENE
+        ========================================================= */
+        .drag-scene {
+            position:fixed; inset:0; z-index:800;
+            background:radial-gradient(ellipse at 30% 60%, #0d0530 0%, #080118 40%, #020617 80%);
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            opacity:0; visibility:hidden;
+            transition:opacity 1s ease, visibility 1s ease;
+        }
+        .drag-scene.active { opacity:1; visibility:visible; }
+        .drag-scene.celebrating {
+            background:radial-gradient(ellipse at center, #1a0a2e 0%, #0a0020 50%, #020617 100%);
+        }
+
+        .hand-top { width:150px; height:150px; object-fit:contain; margin-bottom:1rem;
+            filter:drop-shadow(0 0 20px rgba(252,211,77,0.3)); }
+
+        .drag-text {
+            font-family:'Dancing Script',cursive; font-size:1.8rem;
+            color:var(--text-secondary); text-align:center;
+            margin:1.5rem 0; font-style:italic; line-height:1.6;
+        }
+        .drag-text small {
+            display:block; font-size:1rem; color:var(--text-muted);
+            margin-top:0.5rem; font-family:'Inter',sans-serif; font-style:normal;
+        }
+
+        .hand-bottom {
+            width:150px; height:150px; object-fit:contain; cursor:grab;
+            filter:drop-shadow(0 0 20px rgba(252,211,77,0.3));
+            transition:transform 0.2s ease, filter 0.3s ease;
+            user-select:none; -webkit-user-drag:element;
+        }
+        .hand-bottom:active { cursor:grabbing; transform:scale(1.1);
+            filter:drop-shadow(0 0 35px rgba(252,211,77,0.6)); }
+        .hand-bottom.dragging { opacity:0.6; transform:scale(0.95); }
+        .hand-bottom.over-target { transform:scale(1.15);
+            filter:drop-shadow(0 0 45px rgba(252,211,77,0.8)); }
+
+        .drop-hint-text {
+            text-align:center; font-family:'Dancing Script',cursive;
+            font-size:1rem; color:#fcd34d; margin-top:0.3rem;
+            opacity:0.7; letter-spacing:0.05em;
+        }
+
+        .drop-zone {
+            width:180px; height:180px;
+            border:3px dashed rgba(252,211,77,0.2); border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.4s; position:relative;
+        }
+        .drop-zone.highlight {
+            border-color:rgba(252,211,77,0.7); border-style:solid;
+            box-shadow:0 0 50px rgba(252,211,77,0.25);
+            background:rgba(252,211,77,0.04);
+        }
+        .drop-zone.connected {
+            border-color:transparent; border-style:solid;
+            animation:pulseConnect 0.6s ease-out forwards;
+        }
+        @keyframes pulseConnect {
+            0%  { box-shadow:0 0 0 rgba(252,211,77,0);  transform:scale(1); }
+            50% { box-shadow:0 0 100px rgba(252,211,77,0.6); transform:scale(1.1); }
+            100%{ box-shadow:0 0 30px rgba(252,211,77,0.3); transform:scale(1); }
+        }
+
+        /* =========================================================
+           5. FIREWORKS
+        ========================================================= */
+        #fireworksCanvas {
+            position:fixed; inset:0; z-index:850;
+            pointer-events:none; opacity:0; transition:opacity 1s ease;
+        }
+        #fireworksCanvas.active { opacity:1; }
+
+        /* =========================================================
+           6. MAIN CONTENT — MEMORY TIMELINE
+        ========================================================= */
+        .main-content { opacity:0; transition:opacity 1.5s ease; }
+        .main-content.visible { opacity:1; }
+
+        #starfield {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            z-index:-1; pointer-events:none;
+        }
+
+        .hero {
+            text-align:center; padding:8rem 2rem 4rem;
+            opacity:0; transform:translateY(30px);
+            transition:all 1.2s ease;
+        }
+        .hero.visible { opacity:1; transform:translateY(0); }
+
+        .hero-title {
+            font-family:'Playfair Display',serif;
+            font-size:clamp(3rem,8vw,7rem);
+            background:linear-gradient(to bottom, #fef3c7, #d4a574);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+            line-height:1.1; margin-bottom:1rem;
+        }
+        .hero-subtitle {
+            font-family:'Dancing Script',cursive; font-size:1.8rem;
+            color:var(--text-secondary); font-style:italic;
+        }
+
+        .timeline {
+            position:relative; max-width:750px;
+            margin:0 auto; padding:2rem 1.5rem 4rem;
+        }
+        .timeline-line { display:none; }
+
+        /* Memory cards */
+        .memory {
+            position:relative; margin-bottom:2rem;
+            opacity:0; transform:translateY(40px);
+            transition:opacity 0.7s ease, transform 0.7s ease;
+        }
+        .memory.visible { opacity:1; transform:translateY(0); }
+
+        .memory-content {
+            background:linear-gradient(135deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.01) 100%);
+            border:1px solid rgba(252,211,77,0.15); border-radius:1.25rem;
+            padding:1.5rem 1.75rem; position:relative; overflow:hidden;
+            backdrop-filter:blur(8px);
+            transition:border-color 0.3s, box-shadow 0.3s;
+        }
+        .memory-content::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:2px;
+            background:linear-gradient(to right, transparent, rgba(252,211,77,0.4), transparent);
+            border-radius:1.25rem 1.25rem 0 0;
+        }
+        .memory-content:hover {
+            border-color:rgba(252,211,77,0.3);
+            box-shadow:0 8px 40px rgba(252,211,77,0.07);
+        }
+
+        .memory.dark-card .memory-content {
+            border-color:rgba(239,68,68,0.15);
+            background:linear-gradient(135deg,rgba(239,68,68,0.04) 0%,rgba(0,0,0,0.02) 100%);
+        }
+        .memory.dark-card .memory-content::before {
+            background:linear-gradient(to right, transparent, rgba(239,68,68,0.3), transparent);
+        }
+        .memory.dark-card .memory-content:hover {
+            border-color:rgba(239,68,68,0.3);
+            box-shadow:0 8px 40px rgba(239,68,68,0.06);
+        }
+
+        .memory-header { display:flex; align-items:flex-start; gap:0.85rem; margin-bottom:1rem; }
+        .memory-icon {
+            width:36px; height:36px; border-radius:50%;
+            background:rgba(252,211,77,0.08); border:1px solid rgba(252,211,77,0.25);
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.85rem; flex-shrink:0; margin-top:2px;
+        }
+        .memory.dark-card .memory-icon {
+            background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.25);
+        }
+        .memory-header-text { flex:1; }
+        .memory-title {
+            font-family:'Playfair Display',serif; font-size:1.15rem;
+            color:var(--text-primary); font-weight:600; line-height:1.3; margin-bottom:0.25rem;
+        }
+        .memory-date {
+            font-family:'Inter',sans-serif; font-size:0.75rem;
+            color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase;
+        }
+        .memory-image {
+            width:192px; height:192px; border-radius:0.85rem;
+            margin:0.75rem 0 1rem; object-fit:contain; opacity:0.9;
+            transition:opacity 0.4s, transform 0.4s;
+            display:block; background:transparent;
+        }
+        .memory-content:hover .memory-image { opacity:1; transform:scale(1.02); }
+        .memory-desc {
+            color:var(--text-secondary); line-height:1.75; font-size:0.92rem;
+            font-style:italic; font-weight:300; margin-top:0.5rem;
+        }
+
+        /* Note Button */
+        .note-btn {
+            display:block; margin:3rem auto;
+            padding:1rem 3rem;
+            background:transparent; border:1px solid rgba(252,211,77,0.25);
+            color:var(--gold-light); font-family:'Dancing Script',cursive; font-size:1.5rem;
+            border-radius:50px; cursor:pointer; transition:all 0.4s;
+        }
+        .note-btn:hover { background:rgba(252,211,77,0.08); box-shadow:0 0 30px rgba(252,211,77,0.15); }
+
+        /* Modal */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.85);
+            z-index:200; display:flex; align-items:center; justify-content:center;
+            opacity:0; visibility:hidden; transition:all 0.5s;
+        }
+        .modal-overlay.active { opacity:1; visibility:visible; }
+        .modal-card {
+            background:linear-gradient(135deg,#1a1a2e,#0f0f1a);
+            border:1px solid rgba(252,211,77,0.2); border-radius:2rem;
+            padding:3rem; max-width:500px; width:90%; text-align:center; position:relative;
+        }
+        .modal-close {
+            position:absolute; top:1rem; right:1.5rem;
+            background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;
+        }
+        .modal-title {
+            font-family:'Dancing Script',cursive; font-size:2.5rem;
+            color:var(--gold-light); margin-bottom:1.5rem;
+        }
+        .modal-text {
+            color:var(--text-secondary); font-size:1.2rem; line-height:1.8; font-style:italic;
+        }
+
+        /* Footer */
+        .footer {
+            text-align:center; padding:6rem 2rem;
+            opacity:0; transform:translateY(30px); transition:all 1.2s;
+        }
+        .footer.visible { opacity:1; transform:translateY(0); }
+        .footer-text {
+            font-family:'Playfair Display',serif; font-size:2.5rem;
+            color:var(--text-primary); margin-bottom:0.5rem;
+        }
+        .footer-subtext {
+            font-family:'Dancing Script',cursive; font-size:3rem;
+            background:linear-gradient(to right, #fcd34d, #fef3c7, #fcd34d);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+
+        /* =========================================================
+           7. RESPONSIVE
+        ========================================================= */
+        @media (max-width:768px) {
+            .password-container { padding:2.5rem 1.8rem; }
+            .password-title { font-size:2rem; }
+            .password-lyrics { font-size:1.05rem; }
+            .password-input { width:190px; }
+
+            .cards-label { font-size:0.85rem; }
+            .card-stack-wrap { height:min(420px, 68vh); }
+            .card-text { font-size:1.2rem; }
+
+            .hero { padding:5rem 1.5rem 2rem; }
+            .drag-scene { padding:1.5rem 1rem; gap:1rem; }
+            .drop-zone { width:140px; height:140px; }
+            .hand-top, .hand-bottom { width:110px; height:110px; }
+            .drag-text { font-size:1.3rem; }
+            .footer { padding:4rem 1.5rem; }
+            .footer-text { font-size:1.8rem; }
+            .footer-subtext { font-size:2.2rem; }
+        }
+        @media (max-width:400px) {
+            .hero-title { font-size:2rem; }
+            .drop-zone { width:115px; height:115px; }
+            .drag-text { font-size:1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================================================================
+     PASSWORD SCREEN (3D redesign)
+================================================================ -->
+<div class="password-screen" id="passwordScreen">
+
+    <!-- ambient floating particles -->
+    <div class="pw-particles" id="pwParticles"></div>
+
+    <div class="pw-scene" id="pwScene">
+        <div class="password-container" id="pwCard">
+
+            <!-- subtle orbit -->
+            <div class="pw-orbit">
+                <div class="pw-orbit-dot" style="top:10%; left:50%; transform:translateX(-50%)"></div>
+                <div class="pw-orbit-dot" style="bottom:10%; right:20%;"></div>
+                <div class="pw-orbit-dot" style="top:50%; left:5%;"></div>
+            </div>
+
+            <span class="password-icon">🌙</span>
+            <h1 class="password-title">It's OUR STORY</h1>
+            <p class="password-tagline">a place only you could find ✨</p>
+
+            <p class="password-lyrics">
+                "Tum hi ho, ab tum hi ho<br>
+                Zindagi ab tum hi ho<br>
+                Chain bhi, mera dard bhi<br>
+                Meri <span class="blank" contenteditable="true" id="lyricBlank"></span> ab tum hi ho.."
+            </p>
+
+            <div class="pw-input-wrap">
+                <input
+                    type="text"
+                    class="password-input"
+                    id="passwordInput"
+                    placeholder="fill the blank..."
+                    autocomplete="off"
+                >
+            </div>
+            <br>
+            <button class="password-btn" id="passwordBtn">Enter Our World ✨</button>
+            <p class="password-error" id="passwordError"></p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================================================================
+     VIDEO REVEAL
+================================================================ -->
+<div class="video-reveal" id="videoReveal">
+    <div class="video-container" id="videoContainer">
+        <div class="glow-border"></div>
+        <video
+            class="story-video"
+            id="storyVideo"
+            src="photos/video.mp4"
+            controls
+            preload="auto"
+        ></video>
+    </div>
+    <button class="play-btn" id="playBtn">✨ Play Our Story ✨</button>
+</div>
+
+
+<!-- ================================================================
+     FEELING CARDS SCENE (Instagram Instants style)
+================================================================ -->
+<div class="cards-scene" id="cardsScene">
+    <canvas id="cardsBg"></canvas>
+
+    <p class="cards-label">before i ask you something...</p>
+
+    <div class="card-stack-wrap" id="cardStack">
+        <!-- Cards are injected by JS -->
+    </div>
+
+    <div class="card-dots" id="cardDots"></div>
+    <p class="cards-counter" id="cardsCounter"></p>
+</div>
+
+
+<!-- ================================================================
+     DRAG SCENE — Moon → Star
+================================================================ -->
+<div class="drag-scene" id="dragScene">
+    <canvas id="galaxyCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+
+    <!-- Star (him) — drop zone -->
+    <div class="drop-zone" id="dropZone" style="position:relative;z-index:2;">
+        <svg id="starIcon" class="hand-top" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#fef9c3"/>
+                    <stop offset="40%" stop-color="#fcd34d"/>
+                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.4"/>
+                </radialGradient>
+                <filter id="starBlur">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+            </defs>
+            <circle cx="75" cy="75" r="60" fill="#fcd34d" opacity="0.06"/>
+            <polygon points="75,10 88,52 132,52 98,77 110,120 75,95 40,120 52,77 18,52 62,52" fill="url(#starGlow)" filter="url(#starBlur)" stroke="#fef08a" stroke-width="1.5"/>
+            <polygon points="75,22 85,50 114,50 91,67 100,96 75,79 50,96 59,67 36,50 65,50" fill="#fef9c3" opacity="0.9"/>
+            <circle cx="75" cy="75" r="8" fill="white" opacity="0.8">
+                <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+        <div class="drop-hint-text">— me —</div>
+    </div>
+
+    <p class="drag-text" id="dragText">
+        "Am I lucky enough to hold you again?"<br>
+        <small>(if yes, drag the moon and place it near me ✨)</small>
+    </p>
+
+    <!-- Moon (her) — draggable -->
+    <div id="handBottom" class="hand-bottom" draggable="true" style="position:relative;z-index:2;">
+        <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:150px;">
+            <defs>
+                <radialGradient id="moonGlow" cx="40%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#f0e6ff"/>
+                    <stop offset="50%" stop-color="#c4b5fd"/>
+                    <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.3"/>
+                </radialGradient>
+                <filter id="moonBlur">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+            </defs>
+            <circle cx="75" cy="75" r="62" fill="#a78bfa" opacity="0.08"/>
+            <path d="M75 15 A60 60 0 1 1 75 135 A40 40 0 1 0 75 15Z" fill="url(#moonGlow)" filter="url(#moonBlur)" stroke="#e9d5ff" stroke-width="1.5"/>
+            <circle cx="90" cy="55" r="7" fill="#ddd6fe" opacity="0.4"/>
+            <circle cx="72" cy="95" r="5" fill="#ddd6fe" opacity="0.3"/>
+            <circle cx="105" cy="80" r="4" fill="#ddd6fe" opacity="0.25"/>
+            <circle cx="72" cy="68" r="10" fill="white" opacity="0.5">
+                <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+        <div class="drop-hint-text" style="color:#c4b5fd;">— you —</div>
+    </div>
+
+    <button id="noNeedBtn" onclick="handleNoNeed()" style="
+        margin-top:2.5rem; padding:0.55rem 2rem;
+        background:transparent; border:1px solid rgba(255,255,255,0.1);
+        color:rgba(255,255,255,0.25); font-family:'Inter',sans-serif;
+        font-size:0.8rem; letter-spacing:0.08em; border-radius:50px;
+        cursor:pointer; transition:all 0.3s; position:relative; z-index:2;
+    " onmouseover="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(255,255,255,0.2)'"
+    onmouseout="this.style.color='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.1)'">
+        I can't
+    </button>
+
+    <!-- No-need message box -->
+    <div id="noNeedMsg" style="
+        display:none; position:fixed; inset:0; z-index:9999;
+        background:rgba(0,0,0,0.92);
+        align-items:center; justify-content:center;
+        flex-direction:column; padding:2rem;
+    ">
+        <div style="
+            max-width:480px; width:90%;
+            background:linear-gradient(135deg,#1a1a2e,#0f0f1a);
+            border:1px solid rgba(239,68,68,0.2); border-radius:1.5rem;
+            padding:2.5rem 2rem; text-align:center; position:relative;
+        ">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;
+                background:linear-gradient(to right,transparent,rgba(239,68,68,0.4),transparent);
+                border-radius:1.5rem 1.5rem 0 0;"></div>
+            <div style="font-size:3rem;margin-bottom:1rem;">😔</div>
+            <p style="
+                font-family:'Dancing Script',cursive; font-size:1.55rem;
+                color:#fca5a5; line-height:1.9; font-style:italic; margin-bottom:2rem;
+            ">"mm it's ok.. i know ur scared<br>kmk naa i won't go anywheree..."</p>
+            <button onclick="handleNoNeedRedirect()" style="
+                padding:0.7rem 2.5rem; background:transparent;
+                border:1px solid rgba(252,211,77,0.25); color:rgba(252,211,77,0.7);
+                font-family:'Playfair Display',serif; font-size:1rem;
+                border-radius:50px; cursor:pointer; transition:all 0.3s; letter-spacing:0.05em;
+            " onmouseover="this.style.borderColor='rgba(252,211,77,0.5)';this.style.color='rgba(252,211,77,1)'"
+            onmouseout="this.style.borderColor='rgba(252,211,77,0.25)';this.style.color='rgba(252,211,77,0.7)'">
+                show the memories
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ================================================================
+     FIREWORKS CANVAS
+================================================================ -->
+<canvas id="fireworksCanvas"></canvas>
+
+
+<!-- ================================================================
+     MAIN CONTENT — MEMORY TIMELINE
+================================================================ -->
+<div class="main-content" id="mainContent">
+    <canvas id="starfield"></canvas>
+
+    <header class="hero" id="hero">
+        <h1 class="hero-title">The Story of a<br>Moon &amp; a Star</h1>
+        <p class="hero-subtitle">"Late-night whispers turned into forever"</p>
+    </header>
+
+    <div class="timeline" id="timeline">
+        <div class="timeline-line"></div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">✨</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">When We Had A Crush On Each Other</h3>
+                        <p class="memory-date">Jan 2023 · Sooriyakanda</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/sXfcwL7K/IMG-20230116-094710-2.jpg" class="memory-image">
+                <p class="memory-desc">The days when our eyes started contact and our story began. Little did we know this chance encounter would change our lives...</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💌</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First Love Letters</h3>
+                        <p class="memory-date">March 2023</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/rmVh33GK/331622121-508729754795540-1572049516273367857-n.jpg" class="memory-image">
+                <p class="memory-desc">Don't wanna lie, I was super scared before I sent you the letter. But as I wished, U sent me a reply... And that was the time which made some sense. Btw, we couldn't reach each other til June :]</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">❤️</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">❤️ DAY THAT CHANGED EVERYTHING ❤️</h3>
+                        <p class="memory-date">June 25, 2023 · Kandy</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/cJ3MxnNq/IMG-20230627-084049.jpg" class="memory-image">
+                <p class="memory-desc">Started our conversation just by exchanging a wrist band.. Don't know how to explain this day cuz the words aren't enough!!!! Still remember every single word we spoke that night, and I hope you will remember too...</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💛</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First "I Love You ❤️"</h3>
+                        <p class="memory-date">July 23, 2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🤝</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First Time We Held Our Hands</h3>
+                        <p class="memory-date">July 30, 2023 · Jaffna</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/Bnj79bYD/Snapchat-426078443.jpg" class="memory-image">
+                <p class="memory-desc">Though you were sleeping on our first day, I was holding your hand along the whole night... but on this day you took my hand and held it so tightly, just as I wished.</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">😂</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Sneakin' Around 😂</h3>
+                        <p class="memory-date">Oct 01, 2023</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/FHVtJCdc/IMG-20240113-WA0048.jpg" class="memory-image">
+                <p class="memory-desc">We were like Romeo &amp; Juliet lol 😂... You were there in the balcony and we both were staring at each other for a little while ❤️</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎬</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Cinema Night</h3>
+                        <p class="memory-date">Nov 25, 2023</p>
+                    </div>
+                </div>
+                <p class="memory-desc">I'd been watching you all night!!! It was almost 5 months for our relationship then...</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎄</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">My Christmas Wish 🎄✨</h3>
+                        <p class="memory-date">Dec 28, 2023</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/bJR4ZV2k/IMG-20231229-010410.jpg" class="memory-image">
+                <p class="memory-desc">Got together at my house for Christmas, and I was able to see my own Christmas Wish 😉🎄</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🤗</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First Hug ❤️</h3>
+                        <p class="memory-date">Jan 14, 2024 · Ella</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/nVm4q7sC/IMG-20240115-021555.jpg" class="memory-image">
+                <p class="memory-desc">New Year, New try nah?? 🌝 ;)</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">😭</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">The TikTok Problem</h3>
+                        <p class="memory-date">Early 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Your dad saw some tiktoks on our chat and things started to get kinda chaotic 😭 Remember we couldn't chat as we used to do and drifted a little bit apart from each other.. Don't wanna lie I'm still scared of those days 😖</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌿</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Together Again After a Little While</h3>
+                        <p class="memory-date">April 22, 2024 · Deniyaya</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/4xXCgh2m/IMG-20240422-150336.jpg" class="memory-image">
+                <p class="memory-desc">After some silent nights, we got each other's back again... This was the only trip we acted so innocently. Also the last time together before we broke up 🥲</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💔</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">The Dark Season Begins 😭</h3>
+                        <p class="memory-date">May 7, 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">The day everything changed. Caught in an SMS chat, but managed to be together though we were forced to be apart 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎂</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">On Your Bday!!!</h3>
+                        <p class="memory-date">May 30, 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Remember I came to see you on your birthday??? 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">❤️‍🩹</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">1 Year Anniversary ❤️‍🩹</h3>
+                        <p class="memory-date">June 25, 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Celebrated our 1 Year Anniversary, a little bit peacefully...</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌧️</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Hardest Goodbye 😭</h3>
+                        <p class="memory-date">July 24, 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Don't wanna talk about those times... Just some BAD DAYS :(</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌧️</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Silent Days 😖</h3>
+                        <p class="memory-date">Aug – Dec 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Rare messages &amp; lonely moments... The time we exchanged some little gifts we planned to give before 😖</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">❤️‍🩹</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First Meet After the Break Up</h3>
+                        <p class="memory-date">Sep 21, 2024</p>
+                    </div>
+                </div>
+                <p class="memory-desc">How many things we had to talk on that night nah?? but we were not the same at all right, we both knew it... 😖 You said I've changed, and yes I may have, but my feelings were the same. Btw, you gave me the wrist band on this day.</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌅</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Love Again??? ❤️‍🩹</h3>
+                        <p class="memory-date">Dec 15, 2024</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/d3CTF0tV/2024-12-16-08-34-IMG-3083.jpg" class="memory-image">
+                <p class="memory-desc">After months of silence, your voice again... Started to hang out often again ❤️‍🩹</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌈</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Rebuilding Trust ❤️‍🩹</h3>
+                        <p class="memory-date">Dec 26, 2024</p>
+                    </div>
+                </div>
+                <img src="photos\2024_12_26_11_40_IMG_3429.JPG" class="memory-image">
+                <p class="memory-desc">Started to share our lives again after the long separation... And I'll always remember the snap you sent me wearing the necklace I gave 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎉</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">MINE AGAIN!!!! ❤️</h3>
+                        <p class="memory-date">Jan 1, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Wished me on my Bday saying "HAPPY BDAY LOVE ❤️", and started the affair again... never gonna forget this day.. ;)</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💕</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">FIRST KISS 💕</h3>
+                        <p class="memory-date">Jan 20, 2025 · Dambulla</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/KctVcSp1/2025-01-20-00-07-IMG-4578.jpg" class="memory-image">
+                <p class="memory-desc">HAD OUR VERY FIRST KISS... Don't wanna lie, your lips are so kissable 🥹❤️</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">📱</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Video Call After a Long Time</h3>
+                        <p class="memory-date">Jan 30, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_01_30_14_27_IMG_4967.PNG" class="memory-image">
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💝</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Valentines ❤️</h3>
+                        <p class="memory-date">Feb 14, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Day I gave you two keytags and your name was on it (Also we had an unforgettable argument right 😂)</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🏃</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Came to See You on SportsMeet</h3>
+                        <p class="memory-date">Feb 20, 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🚌</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Hanging Out in the Bus</h3>
+                        <p class="memory-date">April 03, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Planned and just met in a bus 😂 Never thought it would be that easy 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">😚</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Backdoor Kisses 😚</h3>
+                        <p class="memory-date">April 19, 2025</p>
+                    </div>
+                </div>
+                <img src="https://i.postimg.cc/jdTyTfk8/Whats-App-Image-2025-05-15-at-11-50-06.jpg" class="memory-image">
+                <p class="memory-desc">Kinda tasted each other's tongues for the first time ever nah 😂❤️... Still feel like those 2-3 minutes were a miracle that night 😭</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎂</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">On Your Birthday ❤️</h3>
+                        <p class="memory-date">May 30, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Day you got a guitar as your Bday gift 🥳</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌙</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Our Infinity in that one Eve 🥹💕</h3>
+                        <p class="memory-date">June 08, 2025 · 18:43 · Belihul Oya</p>
+                    </div>
+                </div>
+                <img src="photos\2025_06_08_18_40_IMG_7472.JPG" class="memory-image">
+                <p class="memory-desc">We kissed like we could hide inside each other's lips, like the world stopped just to watch us 🥹. Hugged, tangled, lost in each other's eyes just as I prayed the day before ✨💫 Just ME, U &amp; THE MOON 🌝💖</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎊</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">❤️ 2 Years Anniversary ❤️</h3>
+                        <p class="memory-date">June 25, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">It was a Wednesday and you had classes. After you came home, we texted the whole night and you lied to your mom about an essay... remember??? 😂 You risked yourself just to talk with me 🥹❤️</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">⚠️</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">*HACKED*</h3>
+                        <p class="memory-date">July 04, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">I got hacked and lost control of all my accounts! After a while I got them back.</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">📱</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Video Calls</h3>
+                        <p class="memory-date">July 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_07_15_18_22_IMG_8400.PNG" class="memory-image">
+                <p class="memory-desc">Forgetting about the distance by just staring at each other 😚</p>
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌧️</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Lost Your TikTok</h3>
+                        <p class="memory-date">July 24, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">You lost your TikTok account by doing unusual stupid stuff. I'm not gonna forget this!</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🚌</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">On the Bus... 🚌</h3>
+                        <p class="memory-date">July 25, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_07_25_16_09_IMG_8704.JPG" class="memory-image">
+                <p class="memory-desc">Just a little ride together, holding our hands 👩🏻‍❤️‍💋‍👨🏻</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎤</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Meri Aashiqui ❤️</h3>
+                        <p class="memory-date">July 30, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_07_30_22_11_IMG_8819.JPG" class="memory-image">
+                <p class="memory-desc">You won semi finals and were selected for the finals in the singing competition 🎤</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🏆</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">All Island Champion 🏆</h3>
+                        <p class="memory-date">Aug 16, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_08_20_21_04_IMG_9122.JPG" class="memory-image">
+                <p class="memory-desc">You won 1st place from the whole island 🏆🏆. You sang 'Sunn Raha Hai' and I still keep the recording til I die... So proud to be your bf 🥹❤️</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌊</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Away in Weligama 📷</h3>
+                        <p class="memory-date">Aug 25, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_08_25_00_40_IMG_9245.PNG" class="memory-image">
+                <p class="memory-desc">Took a video call after a long time, you were in Weligama. Meli was beside you and you showed me to her. You wrote 'Vish' on the sands... we just stared at each other 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🏨</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Moments at Habarana</h3>
+                        <p class="memory-date">Oct 5, 6, 7 · 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_10_05_00_09_IMG_0216.JPG" class="memory-image">
+                <p class="memory-desc">We kissed like never before, while watching Aashiqui. We played hide &amp; seek, and remember you bit my neck lol... this was the last time we were together like that for 2025 🥹</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">📷</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Randoms 📷</h3>
+                        <p class="memory-date">Oct 26, 2025</p>
+                    </div>
+                </div>
+                <img src="photos\2025_10_26_22_25_IMG_1159.JPG" class="memory-image">
+            </div>
+        </div>
+
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">💔</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">💔</h3>
+                        <p class="memory-date">Nov 11, 2025</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Don't wanna talk about...</p>
+            </div>
+        </div>
+
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎂</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Bday Wish</h3>
+                        <p class="memory-date">Jan 31, 2026</p>
+                    </div>
+                </div>
+                <img src="photos\620559803_1217903700439874_5195218068225256325_n.JPG" class="memory-image">
+            </div>
+        </div>
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">📱</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">Awurudu Dayyyy</h3>
+                        <p class="memory-date">April 14, 2026</p>
+                    </div>
+                </div>
+                <img src="photos\Gemini_Generated_Image_xeo6x6xeo6x6xeo6.png" class="memory-image">
+            </div>
+        </div>
+        <div class="memory dark-card">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🌱</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">First Time in 2026</h3>
+                        <p class="memory-date">May 02, 2026</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Still can't believe that I kissed you, and you held my hand...</p>
+            </div>
+        </div>
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🎂</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">On Your Bday</h3>
+                        <p class="memory-date">Jan 31, 2026</p>
+                    </div>
+                </div>
+                <p class="memory-desc">Came to see u on ur bday.. just to give you a little smile on ur face</p>
+            </div>
+        </div>
+        <div class="memory">
+            <div class="memory-content">
+                <div class="memory-header">
+                    <div class="memory-icon">🏨</div>
+                    <div class="memory-header-text">
+                        <h3 class="memory-title">On the bus again</h3>
+                        <p class="memory-date">June 05, 2026</p>
+                    </div>
+                </div>
+                <img src="photos/WhatsApp Image 2026-06-23 at 21.57.34.jpeg" class="memory-image">
+            </div>
+        </div>
+
+    </div><!-- /timeline -->
+
+    <button class="note-btn" id="noteBtn">For You ❤️</button>
+
+    <footer class="footer" id="footer">
+        <p class="footer-text">To be loved and to be in Love</p>
+        <p class="footer-subtext">❤️</p>
+    </footer>
+</div>
+
+
+<!-- Note Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <h2 class="modal-title">3 YEARS TOGETHER</h2>
+        <p class="modal-text">
+            I still can't believe it's been three years already... 🥹
+            <br><br>
+            25-06-2023 - 25-06-2026, and still counting... I know we had some really bad days, but we also had some really good ones, and I hope we can have more of those good ones in the future ❤️
+            <br><br>
+            With all my love, FOREVER &amp; AGAIN
+        </p>
+    </div>
+</div>
+
+
+<!-- ================================================================
+     SCRIPT
+================================================================ -->
+<script>
+// ============ CONSTANTS ============
+const CORRECT_PASSWORD = 'aashiqui';
+
+// ============ FEELING CARDS DATA ============
+// Edit these lines to write what YOU feel — they will show one by one like Instagram Instants
+const FEELING_CARDS = [
+{ emoji: '🌝', text: 'Ik giya awuruddeth meh wage pissu wadak kara mn... this time mn wenas deyak karanna hithuwa🙃' },
+    { emoji: '👸🏻', text: 'Three years ago, i made a promise.. i found my <em>everything</em>' },
+    { emoji: '🤍', text: 'oyath ekka eh hitapu kale thamai mn jeewithe sathutinma hitapu kale... Ik godak prashna una, and even i hurt you... a lot actually, but u never left me..' },
+    { emoji: '🌙', text: 'soo there\'s no word for what we are right now... but whatever it is, I\'m in <em>love</em> with this feeling' },
+    { emoji: '💛', text: 'Ik things are complicated, and you\'re scared...' },
+    { emoji: '🥹', text: 'But we both know we\'re still stuck in <em>2025</em>, isn\'t it?' },
+    { emoji: '🌌', text: 'I don\'t wanna see u crying anymore... mge modi hina wela iddi thamai lassanaaa...' },
+    { emoji: '💫', text: 'and also I don\'t want to be your past. I want to be every day of your future, <em>if you\'ll let me</em>.' },
+    { emoji: '❤️', text: 'So here I am, asking u out again... mn dannava mona de unath oyata mawa nthi karaganna one na kiyalaa.. ithimmm>>' },
+];
+
+// ============ DOM REFS ============
+const passwordScreen = document.getElementById('passwordScreen');
+const passwordInput  = document.getElementById('passwordInput');
+const passwordBtn    = document.getElementById('passwordBtn');
+const passwordError  = document.getElementById('passwordError');
+const lyricBlank     = document.getElementById('lyricBlank');
+const pwScene        = document.getElementById('pwScene');
+
+const videoReveal    = document.getElementById('videoReveal');
+const videoContainer = document.getElementById('videoContainer');
+const storyVideo     = document.getElementById('storyVideo');
+const playBtn        = document.getElementById('playBtn');
+
+const cardsScene     = document.getElementById('cardsScene');
+const cardStack      = document.getElementById('cardStack');
+const cardDots       = document.getElementById('cardDots');
+const cardsCounter   = document.getElementById('cardsCounter');
+
+const dragScene      = document.getElementById('dragScene');
+const dropZone       = document.getElementById('dropZone');
+const handBottom     = document.getElementById('handBottom');
+const dragText       = document.getElementById('dragText');
+
+const fireworksCanvas = document.getElementById('fireworksCanvas');
+const fireworksCtx    = fireworksCanvas.getContext('2d');
+
+const mainContent    = document.getElementById('mainContent');
+const starfieldCanvas= document.getElementById('starfield');
+const starfieldCtx   = starfieldCanvas.getContext('2d');
+const hero           = document.getElementById('hero');
+const footer         = document.getElementById('footer');
+
+const noteBtn        = document.getElementById('noteBtn');
+const modalOverlay   = document.getElementById('modalOverlay');
+const modalClose     = document.getElementById('modalClose');
+
+// ============ 3D CARD TILT on mouse move ============
+(function(){
+    const card = document.getElementById('pwCard');
+    const scene= pwScene;
+    document.addEventListener('mousemove', (e) => {
+        if (!passwordScreen.classList.contains('hidden')) {
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            const dx = (e.clientX - cx) / cx;
+            const dy = (e.clientY - cy) / cy;
+            scene.style.animation = 'none';
+            scene.style.transform = `rotateX(${-dy * 8}deg) rotateY(${dx * 10}deg)`;
+        }
+    });
+    document.addEventListener('mouseleave', () => {
+        scene.style.animation = 'sceneTilt 8s ease-in-out infinite';
+        scene.style.transform = '';
+    });
+})();
+
+// ============ FLOATING PARTICLES on login ============
+(function(){
+    const container = document.getElementById('pwParticles');
+    const colors = ['rgba(252,211,77,', 'rgba(167,139,250,', 'rgba(251,191,36,'];
+    for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'pw-particle';
+        const size = 3 + Math.random() * 7;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const dur = 8 + Math.random() * 14;
+        const delay = Math.random() * -15;
+        p.style.cssText = `
+            width:${size}px; height:${size}px;
+            left:${Math.random() * 100}%;
+            background:${color}${0.3 + Math.random() * 0.5});
+            animation-duration:${dur}s;
+            animation-delay:${delay}s;
+            filter:blur(${Math.random() > 0.5 ? '2px' : '0'});
+        `;
+        container.appendChild(p);
+    }
+})();
+
+// ============ PASSWORD LOGIC ============
+function attemptUnlock() {
+    const entered = passwordInput.value.trim().toLowerCase();
+    if (entered === CORRECT_PASSWORD) {
+        passwordError.textContent = '';
+        passwordScreen.classList.add('hidden');
+        // Skip walk-in animation: go straight to video
+        revealVideo();
+    } else {
+        passwordError.textContent = 'Not quite... Listen to the song again 🎵';
+        passwordInput.value = '';
+        passwordInput.focus();
+        // shake the card
+        const card = document.getElementById('pwCard');
+        card.style.animation = 'none';
+        card.style.transform = 'translateX(-12px)';
+        setTimeout(() => { card.style.transform = 'translateX(12px)'; }, 80);
+        setTimeout(() => { card.style.transform = 'translateX(-8px)'; }, 160);
+        setTimeout(() => { card.style.transform = 'translateX(8px)'; }, 240);
+        setTimeout(() => { card.style.transform = 'translateX(0)'; }, 320);
+    }
+}
+passwordBtn.addEventListener('click', attemptUnlock);
+passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') attemptUnlock(); });
+lyricBlank.addEventListener('click', () => { passwordInput.focus(); });
+
+// ============ VIDEO REVEAL ============
+function revealVideo() {
+    videoReveal.classList.add('active');
+    setTimeout(() => { videoContainer.classList.add('active'); }, 300);
+}
+
+playBtn.addEventListener('click', () => {
+    storyVideo.play().catch(err => console.log('Playback error:', err));
+    playBtn.textContent = '✨ Watching... ✨';
+    playBtn.style.opacity = '0.5';
+    playBtn.style.pointerEvents = 'none';
+});
+
+storyVideo.addEventListener('ended', () => {
+    videoReveal.classList.remove('active');
+    videoContainer.classList.remove('active');
+    setTimeout(() => { showCardsScene(); }, 800);
+});
+
+storyVideo.addEventListener('pause', () => {
+    if (storyVideo.currentTime > 0 && storyVideo.currentTime >= storyVideo.duration - 1) {
+        videoReveal.classList.remove('active');
+        videoContainer.classList.remove('active');
+        setTimeout(() => showCardsScene(), 800);
+    }
+});
+
+// ============ FEELING CARDS (Instagram Instants) ============
+let currentCardIndex = 0;
+let cardElements = [];
+let isAnimating = false;
+
+function buildCards() {
+    cardStack.innerHTML = '';
+    cardElements = [];
+
+    // Build dots
+    cardDots.innerHTML = '';
+    FEELING_CARDS.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'card-dot' + (i === 0 ? ' active' : '');
+        cardDots.appendChild(dot);
+    });
+
+    // Build card elements (all in DOM, stacked)
+    // Render in reverse so first card is on top
+    for (let i = FEELING_CARDS.length - 1; i >= 0; i--) {
+        const data = FEELING_CARDS[i];
+        const card = document.createElement('div');
+        card.className = 'feeling-card';
+        card.innerHTML = `
+            <div class="card-emoji">${data.emoji}</div>
+            <p class="card-text">${data.text}</p>
+            ${i === FEELING_CARDS.length - 1 ? '<p class="card-tap-hint">tap to continue →</p>' : '<p class="card-tap-hint">tap to continue →</p>'}
+        `;
+        cardStack.appendChild(card);
+        cardElements.unshift(card); // front = index 0
+    }
+
+    updateCardStackPositions();
+    updateCounter();
+}
+
+function updateCardStackPositions() {
+    cardElements.forEach((card, idx) => {
+        const rel = idx - currentCardIndex;
+        card.classList.remove('stack-2','stack-3','stack-4-plus','swiping-out');
+
+        if (rel < 0) {
+            // already swiped: keep it invisible (it's been moved away by animation)
+            card.style.zIndex = 0;
+            card.style.opacity = '0';
+            card.style.pointerEvents = 'none';
+        } else if (rel === 0) {
+            // front card
+            card.style.zIndex = 10;
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0) translateY(0) scale(1) rotate(0deg)';
+            card.style.pointerEvents = 'auto';
+        } else if (rel === 1) {
+            card.className = 'feeling-card stack-2';
+            card.style.zIndex = 9;
+            card.style.pointerEvents = 'none';
+        } else if (rel === 2) {
+            card.className = 'feeling-card stack-3';
+            card.style.zIndex = 8;
+            card.style.pointerEvents = 'none';
+        } else {
+            card.className = 'feeling-card stack-4-plus';
+            card.style.zIndex = 7;
+            card.style.pointerEvents = 'none';
+        }
+    });
+}
+
+function updateCounter() {
+    const remaining = FEELING_CARDS.length - currentCardIndex;
+    cardsCounter.textContent = `${currentCardIndex + 1} / ${FEELING_CARDS.length}`;
+
+    // Update dots
+    document.querySelectorAll('.card-dot').forEach((dot, i) => {
+        dot.className = 'card-dot';
+        if (i < currentCardIndex) dot.classList.add('done');
+        else if (i === currentCardIndex) dot.classList.add('active');
+    });
+}
+
+function advanceCard() {
+    if (isAnimating) return;
+
+    const frontCard = cardElements[currentCardIndex];
+    if (!frontCard) return;
+
+    isAnimating = true;
+
+    // Swipe out
+    frontCard.classList.add('swiping-out');
+    frontCard.style.zIndex = 20;
+
+    setTimeout(() => {
+        currentCardIndex++;
+
+        if (currentCardIndex >= FEELING_CARDS.length) {
+            // All cards seen — go to drag scene
+            isAnimating = false;
+            showDragScene();
+            return;
+        }
+
+        updateCardStackPositions();
+        updateCounter();
+        isAnimating = false;
+    }, 520);
+}
+
+// touch / click on card stack
+let touchStartX = 0;
+cardStack.addEventListener('click', (e) => {
+    advanceCard();
+});
+cardStack.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+}, { passive: true });
+cardStack.addEventListener('touchend', (e) => {
+    const dx = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 20 || true) { // any swipe or tap
+        advanceCard();
+    }
+}, { passive: true });
+
+// also keyboard
+document.addEventListener('keydown', (e) => {
+    if (cardsScene.classList.contains('active')) {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            advanceCard();
+        }
+    }
+});
+
+// cards bg canvas stars
+function initCardsBg() {
+    const cv = document.getElementById('cardsBg');
+    cv.width = window.innerWidth;
+    cv.height = window.innerHeight;
+    const cx = cv.getContext('2d');
+    const stars = Array.from({length: 180}, () => ({
+        x: Math.random() * cv.width,
+        y: Math.random() * cv.height,
+        r: Math.random() * 1.5 + 0.3,
+        op: 0.2 + Math.random() * 0.5,
+        speed: 0.002 + Math.random() * 0.004
+    }));
+    function draw() {
+        cx.clearRect(0, 0, cv.width, cv.height);
+        stars.forEach(s => {
+            s.op += Math.sin(Date.now() * s.speed) * 0.004;
+            s.op = Math.max(0.1, Math.min(0.7, s.op));
+            cx.beginPath();
+            cx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            cx.fillStyle = `rgba(252,211,77,${s.op})`;
+            cx.fill();
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+function showCardsScene() {
+    cardsScene.classList.add('active');
+    initCardsBg();
+    buildCards();
+}
+
+// ============ DRAG SCENE ============
+function showDragScene() {
+    cardsScene.classList.remove('active');
+    dragScene.classList.add('active');
+    initGalaxyCanvas();
+    initDragDrop();
+}
+
+function initGalaxyCanvas() {
+    const gc = document.getElementById('galaxyCanvas');
+    if (!gc) return;
+    gc.width = window.innerWidth; gc.height = window.innerHeight;
+    const gx = gc.getContext('2d');
+    const gStars = Array.from({length:320}, () => ({
+        x: Math.random()*gc.width, y: Math.random()*gc.height,
+        r: Math.random()*1.8+0.2, op: Math.random()*0.7+0.2,
+        speed: Math.random()*0.004+0.001, hue: Math.random()>0.8?260:50
+    }));
+    function drawNebula() {
+        const g1 = gx.createRadialGradient(gc.width*0.3,gc.height*0.4,0,gc.width*0.3,gc.height*0.4,gc.width*0.35);
+        g1.addColorStop(0,'rgba(80,20,180,0.18)'); g1.addColorStop(1,'rgba(0,0,0,0)');
+        gx.fillStyle=g1; gx.fillRect(0,0,gc.width,gc.height);
+        const g2 = gx.createRadialGradient(gc.width*0.7,gc.height*0.6,0,gc.width*0.7,gc.height*0.6,gc.width*0.3);
+        g2.addColorStop(0,'rgba(180,80,20,0.12)'); g2.addColorStop(1,'rgba(0,0,0,0)');
+        gx.fillStyle=g2; gx.fillRect(0,0,gc.width,gc.height);
+    }
+    function animGalaxy() {
+        gx.clearRect(0,0,gc.width,gc.height); drawNebula();
+        gStars.forEach(s => {
+            s.op += Math.sin(Date.now()*s.speed)*0.005;
+            s.op = Math.max(0.1,Math.min(0.9,s.op));
+            gx.beginPath(); gx.arc(s.x,s.y,s.r,0,Math.PI*2);
+            gx.fillStyle = s.hue===260 ? `rgba(196,181,253,${s.op})` : `rgba(252,211,77,${s.op*0.7})`;
+            gx.fill();
+        });
+        requestAnimationFrame(animGalaxy);
+    }
+    animGalaxy();
+}
+
+function initDragDrop() {
+    handBottom.addEventListener('dragstart', (e) => {
+        handBottom.classList.add('dragging');
+        e.dataTransfer.setData('text/plain','hand');
+        e.dataTransfer.effectAllowed='move';
+    });
+    handBottom.addEventListener('dragend', () => { handBottom.classList.remove('dragging'); });
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect='move'; });
+    dropZone.addEventListener('dragenter', (e) => { e.preventDefault(); dropZone.classList.add('highlight'); handBottom.classList.add('over-target'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('highlight'); handBottom.classList.remove('over-target'); });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('highlight'); handBottom.classList.remove('over-target','dragging');
+        onHandsConnected();
+    });
+
+    // Touch
+    let tStartY=0, isTouching=false;
+    handBottom.addEventListener('touchstart', (e) => {
+        isTouching=true; tStartY=e.touches[0].clientY;
+        handBottom.style.transition='none'; handBottom.classList.add('dragging');
+    }, {passive:true});
+    handBottom.addEventListener('touchmove', (e) => {
+        if (!isTouching) return; e.preventDefault();
+        const dy = e.touches[0].clientY - tStartY;
+        handBottom.style.transform=`translateY(${dy}px)`;
+        const hr=handBottom.getBoundingClientRect(), zr=dropZone.getBoundingClientRect();
+        const hc=hr.top+hr.height/2;
+        if (hc<zr.bottom && hc>zr.top) { dropZone.classList.add('highlight'); handBottom.classList.add('over-target'); }
+        else { dropZone.classList.remove('highlight'); handBottom.classList.remove('over-target'); }
+    }, {passive:false});
+    handBottom.addEventListener('touchend', () => {
+        if (!isTouching) return; isTouching=false;
+        const hr=handBottom.getBoundingClientRect(), zr=dropZone.getBoundingClientRect();
+        const hc=hr.top+hr.height/2;
+        handBottom.style.transition='transform 0.4s cubic-bezier(0.16,1,0.3,1)';
+        handBottom.style.transform='translateY(0)';
+        handBottom.classList.remove('dragging'); dropZone.classList.remove('highlight'); handBottom.classList.remove('over-target');
+        if (hc<zr.bottom && hc>zr.top) onHandsConnected();
+    });
+}
+
+function handleNoNeed() {
+    saveHerAnswer('NO');
+    const msg = document.getElementById('noNeedMsg');
+    msg.style.display='flex';
+    requestAnimationFrame(() => {
+        msg.style.opacity='0'; msg.style.transition='opacity 0.6s ease';
+        requestAnimationFrame(() => { msg.style.opacity='1'; });
+    });
+}
+function handleNoNeedRedirect() {
+    const msg = document.getElementById('noNeedMsg');
+    msg.style.opacity='0';
+    setTimeout(() => { msg.style.display='none'; dragScene.classList.remove('active'); showMainContent(); }, 600);
+}
+
+function onHandsConnected() {
+    dropZone.classList.add('connected');
+    dragText.innerHTML = '"Forever and again... ❤️"';
+    dragText.style.color='var(--gold-light)';
+    handBottom.style.opacity='0'; handBottom.style.pointerEvents='none';
+    saveHerAnswer('YES');
+    setTimeout(() => { dragScene.classList.add('celebrating'); startFireworks(); }, 600);
+    setTimeout(() => {
+        dragScene.classList.remove('active','celebrating');
+        fireworksCanvas.classList.remove('active');
+        showMainContent();
+    }, 7000);
+}
+
+// ============ EMAILJS ============
+const EJS_SERVICE  = 'service_f16feyh';
+const EJS_TEMPLATE = 'template_dzgxeli';
+const EJS_KEY      = 'h_N2gRjh07XDEnVLJ';
+emailjs.init(EJS_KEY);
+
+function saveHerAnswer(answerText) {
+    const time = new Date().toLocaleString('en-LK',{timeZone:'Asia/Colombo'});
+    const msg  = answerText==='YES' ? 'She dragged the moon to your star! 🌙✨' : 'She clicked No Need... 💔';
+    emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+        answer: answerText==='YES' ? 'YES ❤️' : 'No Need 💔',
+        time, message: msg
+    }).then(() => console.log('✅ Email sent!')).catch(e => console.log('❌ Email error:',e));
+    console.log('Answer recorded:', answerText, time);
+}
+
+// ============ FIREWORKS ============
+let fwParticles=[], fwAnimId;
+function resizeFW() { fireworksCanvas.width=window.innerWidth; fireworksCanvas.height=window.innerHeight; }
+window.addEventListener('resize', resizeFW); resizeFW();
+
+class Particle {
+    constructor(x,y,color){
+        this.x=x; this.y=y; this.color=color;
+        this.vel={x:(Math.random()-0.5)*8, y:(Math.random()-0.5)*8-2};
+        this.alpha=1; this.decay=Math.random()*0.015+0.005;
+        this.size=Math.random()*3+1; this.gravity=0.04;
+    }
+    update(){ this.vel.y+=this.gravity; this.x+=this.vel.x; this.y+=this.vel.y; this.alpha-=this.decay; }
+    draw(ctx){ ctx.save(); ctx.globalAlpha=Math.max(0,this.alpha); ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+}
+
+function createFirework(x,y){
+    const cols=['#fcd34d','#f59e0b','#fbbf24','#fef3c7','#ef4444','#f87171','#fb923c','#f472b6','#a78bfa','#818cf8','#38bdf8','#4ade80','#ffffff','#fef08a','#fda4af','#d8b4fe'];
+    const col=cols[Math.floor(Math.random()*cols.length)];
+    for (let i=0;i<100;i++) fwParticles.push(new Particle(x,y,col));
+}
+
+function animFW(){
+    fireworksCtx.clearRect(0,0,fireworksCanvas.width,fireworksCanvas.height);
+    const grad=fireworksCtx.createRadialGradient(fireworksCanvas.width/2,fireworksCanvas.height/2,0,fireworksCanvas.width/2,fireworksCanvas.height/2,fireworksCanvas.width*0.7);
+    grad.addColorStop(0,'rgba(26,10,46,0.3)'); grad.addColorStop(1,'rgba(2,6,23,0.1)');
+    fireworksCtx.fillStyle=grad; fireworksCtx.fillRect(0,0,fireworksCanvas.width,fireworksCanvas.height);
+    fwParticles=fwParticles.filter(p=>p.alpha>0);
+    fwParticles.forEach(p=>{p.update();p.draw(fireworksCtx);});
+    if (Math.random()<0.15){ createFirework(Math.random()*fireworksCanvas.width, Math.random()*fireworksCanvas.height*0.6); }
+    fwAnimId=requestAnimationFrame(animFW);
+}
+
+function startFireworks(){
+    fireworksCanvas.classList.add('active');
+    for(let i=0;i<8;i++) setTimeout(()=>{ createFirework(fireworksCanvas.width*(0.2+Math.random()*0.6),fireworksCanvas.height*(0.1+Math.random()*0.4)); },i*200);
+    animFW();
+}
+
+// ============ MAIN CONTENT ============
+function showMainContent(){
+    mainContent.classList.add('visible');
+    document.body.style.overflow='auto';
+    initStarfield();
+    setTimeout(()=>{ hero.classList.add('visible'); checkMemoryVisibility(); },300);
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============ STARFIELD ============
+let stars=[], sfAnimId;
+function resizeSF(){ starfieldCanvas.width=window.innerWidth; starfieldCanvas.height=window.innerHeight; }
+window.addEventListener('resize',resizeSF); resizeSF();
+
+function initStarfield(){
+    stars=Array.from({length:250},()=>({
+        x:Math.random()*starfieldCanvas.width, y:Math.random()*starfieldCanvas.height,
+        z:Math.random()*1000, radius:0.5+Math.random()*2, opacity:0.2+Math.random()*0.6
+    }));
+    if (!sfAnimId) renderStars();
+}
+
+function renderStars(){
+    starfieldCtx.clearRect(0,0,starfieldCanvas.width,starfieldCanvas.height);
+    const cx=starfieldCanvas.width/2, cy=starfieldCanvas.height/2;
+    stars.forEach(s=>{
+        const p=s.z/1000;
+        s.x+=(cx-s.x)*p*0.02; s.y+=(cy-s.y)*p*0.02;
+        if(s.x<0||s.x>starfieldCanvas.width||s.y<0||s.y>starfieldCanvas.height){
+            s.x=Math.random()*starfieldCanvas.width; s.y=Math.random()*starfieldCanvas.height;
+        }
+        starfieldCtx.beginPath(); starfieldCtx.arc(s.x,s.y,s.radius,0,Math.PI*2);
+        starfieldCtx.fillStyle=`rgba(252,211,77,${s.opacity})`; starfieldCtx.fill();
+    });
+    sfAnimId=requestAnimationFrame(renderStars);
+}
+
+// ============ SCROLL ANIMATIONS ============
+function checkMemoryVisibility(){
+    const cards=document.querySelectorAll('.memory');
+    const wh=window.innerHeight;
+    cards.forEach(c=>{
+        const r=c.getBoundingClientRect();
+        if (r.top+r.height/2<wh*0.85 && r.top+r.height/2>-r.height*0.3) c.classList.add('visible');
+    });
+    if (hero.getBoundingClientRect().top<wh*0.8) hero.classList.add('visible');
+    if (footer.getBoundingClientRect().top<wh*0.8) footer.classList.add('visible');
+}
+window.addEventListener('scroll',checkMemoryVisibility);
+
+// ============ NOTE MODAL ============
+noteBtn.addEventListener('click',()=>modalOverlay.classList.add('active'));
+modalClose.addEventListener('click',()=>modalOverlay.classList.remove('active'));
+modalOverlay.addEventListener('click',(e)=>{ if(e.target===modalOverlay) modalOverlay.classList.remove('active'); });
+
+// ============ INIT ============
+document.body.style.overflow='hidden';
+passwordInput.focus();
+
+console.log('🌙✨ OUR STORY v4.0 ✨🌙');
+</script>
+</body>
+</html>

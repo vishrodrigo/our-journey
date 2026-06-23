@@ -1,0 +1,2413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It's OUR STORY - v3.0</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9250/9250015.png" type="image/png">
+    <meta name="robots" content="noindex, nofollow">
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #f59e0b;
+            --gold-light: #fcd34d;
+            --gold-dark: #b45309;
+            --bg-deep: #020617;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-primary: #fef3c7;
+            --text-secondary: #d4a574;
+            --text-muted: rgba(254, 243, 199, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ============ PASSWORD SCREEN ============ */
+        .password-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #0a0a1a 0%, #020617 70%);
+            transition: opacity 1.2s ease, visibility 1.2s ease;
+        }
+
+        .password-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .password-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(252, 211, 77, 0.12);
+            border-radius: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .password-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .password-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            background: linear-gradient(to bottom, #fcd34d, #b45309);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+        }
+
+        .password-lyrics {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            line-height: 2.2;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .password-lyrics .blank {
+            display: inline-block;
+            width: 160px;
+            border-bottom: 2px dashed rgba(252, 211, 77, 0.5);
+            color: var(--gold-light);
+            font-size: 1.6rem;
+            padding: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-lyrics .blank:focus {
+            outline: none;
+            border-bottom-color: var(--gold-light);
+            border-bottom-style: solid;
+        }
+
+        .password-input {
+            width: 200px;
+            padding: 0.8rem 1rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(252, 211, 77, 0.3);
+            color: var(--gold-light);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .password-input:focus {
+            border-bottom-color: var(--gold-light);
+        }
+
+        .password-input::placeholder {
+            color: rgba(254, 243, 199, 0.15);
+            font-size: 1.2rem;
+        }
+
+        .password-btn {
+            padding: 0.8rem 3rem;
+            background: transparent;
+            border: 1px solid rgba(252, 211, 77, 0.3);
+            color: var(--gold-light);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.15em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .password-btn:hover {
+            background: rgba(252, 211, 77, 0.08);
+            border-color: var(--gold-light);
+            box-shadow: 0 0 30px rgba(252, 211, 77, 0.12);
+        }
+
+        .password-error {
+            color: #ef4444;
+            font-size: 0.9rem;
+            min-height: 1.5rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* ============ WALK-IN ANIMATION SCENE ============ */
+        .walkin-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            background: radial-gradient(ellipse at center, #0f0f2a 0%, #020617 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .walkin-scene.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .walkin-scene.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .silhouette {
+            position: absolute;
+            width: 120px;
+            height: 200px;
+            object-fit: contain;
+            transition: transform 0.1s ease;
+        }
+
+        .boy-silhouette {
+            left: -150px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .girl-silhouette {
+            right: -150px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .boy-silhouette.walking {
+            animation: walkInLeft 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .girl-silhouette.walking {
+            animation: walkInRight 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes walkInLeft {
+            0% { left: -150px; opacity: 0; }
+            20% { opacity: 1; }
+            80% { left: calc(50% - 140px); opacity: 1; }
+            100% { left: calc(50% - 70px); opacity: 1; }
+        }
+
+        @keyframes walkInRight {
+            0% { right: -150px; opacity: 0; }
+            20% { opacity: 1; }
+            80% { right: calc(50% - 140px); opacity: 1; }
+            100% { right: calc(50% - 70px); opacity: 1; }
+        }
+
+        .boy-silhouette.holding {
+            left: calc(50% - 70px);
+            animation: none;
+        }
+
+        .girl-silhouette.holding {
+            right: calc(50% - 70px);
+            animation: none;
+        }
+
+        /* Hand connection spark */
+        .hand-spark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: var(--gold-light);
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(5px);
+            transition: all 0.5s ease;
+        }
+
+        .hand-spark.active {
+            opacity: 1;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 0 40px rgba(252, 211, 77, 0.8), 0 0 80px rgba(252, 211, 77, 0.4);
+        }
+
+        /* Video reveal */
+        .video-reveal {
+            position: fixed;
+            inset: 0;
+            z-index: 950;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 2rem 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s ease;
+            overflow: hidden;
+        }
+
+        .video-reveal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .video-container {
+            position: relative;
+            width: min(40vw, 380px);
+            max-height: 75vh;
+            opacity: 0;
+            transform: scale(0.85);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .video-container.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        @media (max-width: 600px) {
+            .video-container {
+                width: min(85vw, 360px);
+                max-height: 65vh;
+            }
+        }
+
+        .glow-border {
+            position: absolute;
+            inset: -4px;
+            border-radius: 1.7rem;
+            background: linear-gradient(135deg, 
+                rgba(252, 211, 77, 0.4), 
+                transparent 30%, 
+                transparent 70%, 
+                rgba(252, 211, 77, 0.4)
+            );
+            z-index: -1;
+            filter: blur(15px);
+        }
+
+        .story-video {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 1.5rem;
+            box-shadow: 0 0 60px rgba(252, 211, 77, 0.15);
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .story-video {
+                max-height: 60vh;
+                border-radius: 1rem;
+            }
+        }
+
+        .play-btn {
+            margin-top: 0;
+            flex-shrink: 0;
+            padding: 0.85rem 3rem;
+            background: rgba(252, 211, 77, 0.08);
+            border: 1px solid rgba(252, 211, 77, 0.4);
+            color: var(--gold-light);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            letter-spacing: 0.05em;
+        }
+        
+
+        .play-btn:hover {
+            background: rgba(252, 211, 77, 0.15);
+            border-color: var(--gold-light);
+            box-shadow: 0 0 40px rgba(252, 211, 77, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ============ DRAG & DROP HAND SCENE ============ */
+        .drag-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 800;
+            background: radial-gradient(ellipse at 30% 60%, #0d0530 0%, #080118 40%, #020617 80%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .drag-scene.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drag-scene.celebrating {
+            background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0020 50%, #020617 100%);
+        }
+
+        .hand-top {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px rgba(252, 211, 77, 0.3));
+        }
+
+        .drag-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin: 1.5rem 0;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .drag-text small {
+            display: block;
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-style: normal;
+        }
+
+        .hand-bottom {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            cursor: grab;
+            filter: drop-shadow(0 0 20px rgba(252, 211, 77, 0.3));
+            transition: transform 0.2s ease, filter 0.3s ease;
+            user-select: none;
+            -webkit-user-drag: element;
+        }
+
+        .hand-bottom:active {
+            cursor: grabbing;
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 35px rgba(252, 211, 77, 0.6));
+        }
+
+        .hand-bottom.dragging {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .hand-bottom.over-target {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 45px rgba(252, 211, 77, 0.8));
+        }
+
+        .drop-hint-text {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1rem;
+            color: #fcd34d;
+            margin-top: 0.3rem;
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+        }
+
+        .drop-zone {
+            width: 180px;
+            height: 180px;
+            border: 3px dashed rgba(252, 211, 77, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .drop-zone.highlight {
+            border-color: rgba(252, 211, 77, 0.7);
+            border-style: solid;
+            box-shadow: 0 0 50px rgba(252, 211, 77, 0.25);
+            background: rgba(252, 211, 77, 0.04);
+        }
+
+        .drop-zone.connected {
+            border-color: transparent;
+            border-style: solid;
+            animation: pulse-connect 0.6s ease-out forwards;
+        }
+
+        @keyframes pulse-connect {
+            0% { 
+                box-shadow: 0 0 0 rgba(252, 211, 77, 0); 
+                transform: scale(1); 
+            }
+            50% { 
+                box-shadow: 0 0 100px rgba(252, 211, 77, 0.6); 
+                transform: scale(1.1); 
+            }
+            100% { 
+                box-shadow: 0 0 30px rgba(252, 211, 77, 0.3); 
+                transform: scale(1); 
+            }
+        }
+
+        /* ============ FIREWORKS CANVAS ============ */
+        #fireworksCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 850;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #fireworksCanvas.active {
+            opacity: 1;
+        }
+
+        /* ============ MAIN TIMELINE (Hidden until after fireworks) ============ */
+        .main-content {
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+
+        /* Starfield Canvas */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Header */
+        .hero {
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s ease;
+        }
+
+        .hero.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            background: linear-gradient(to bottom, #fef3c7, #d4a574);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Timeline */
+        /* ============ TIMELINE ============ */
+        .timeline {
+            position: relative;
+            max-width: 750px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .timeline-line {
+            display: none;
+        }
+
+        /* ============ MEMORY CARDS ============ */
+        .memory {
+            position: relative;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .memory.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .memory-content {
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(252, 211, 77, 0.15);
+            border-radius: 1.25rem;
+            padding: 1.5rem 1.75rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .memory-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(252,211,77,0.4), transparent);
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .memory-content:hover {
+            border-color: rgba(252, 211, 77, 0.3);
+            box-shadow: 0 8px 40px rgba(252, 211, 77, 0.07);
+        }
+
+        /* Dark period cards */
+        .memory.dark-card .memory-content {
+            border-color: rgba(239, 68, 68, 0.15);
+            background: linear-gradient(135deg, rgba(239,68,68,0.04) 0%, rgba(0,0,0,0.02) 100%);
+        }
+
+        .memory.dark-card .memory-content::before {
+            background: linear-gradient(to right, transparent, rgba(239,68,68,0.3), transparent);
+        }
+
+        .memory.dark-card .memory-content:hover {
+            border-color: rgba(239, 68, 68, 0.3);
+            box-shadow: 0 8px 40px rgba(239, 68, 68, 0.06);
+        }
+
+        /* Card header row */
+        .memory-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .memory-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(252, 211, 77, 0.08);
+            border: 1px solid rgba(252, 211, 77, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .memory.dark-card .memory-icon {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+
+        .memory-header-text {
+            flex: 1;
+        }
+
+        .memory-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 0.25rem;
+        }
+
+        .memory-date {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* Image */
+        .memory-image {
+            width: 192px;
+            height: 192px;
+            border-radius: 0.85rem;
+            margin: 0.75rem 0 1rem;
+            object-fit: contain;
+            opacity: 0.9;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            display: block;
+            background: transparent;
+        }
+
+        .memory-content:hover .memory-image {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        /* Description */
+        .memory-desc {
+            color: var(--text-secondary);
+            line-height: 1.75;
+            font-size: 0.92rem;
+            font-style: italic;
+            font-weight: 300;
+            margin-top: 0.5rem;
+        }
+
+        /* No image marker (old class, keep for compat) */
+        .no-image-marker {
+            display: none;
+        }
+
+        .memory-marker {
+            display: none;
+        }
+
+        .memory-card.left .memory-marker {
+            right: calc(50% - 20px);
+        }
+
+        .memory-card.right .memory-marker {
+            left: calc(50% - 20px);
+        }
+
+        .memory-marker.dark {
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+        }
+
+        /* Surprise Note */
+        .note-btn {
+            display: block;
+            margin: 3rem auto;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 1px solid rgba(252, 211, 77, 0.25);
+            color: var(--gold-light);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .note-btn:hover {
+            background: rgba(252, 211, 77, 0.08);
+            box-shadow: 0 0 30px rgba(252, 211, 77, 0.15);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+            border: 1px solid rgba(252, 211, 77, 0.2);
+            border-radius: 2rem;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: var(--gold-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-text {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 6rem 2rem;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s ease;
+        }
+
+        .footer.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .footer-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-subtext {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            background: linear-gradient(to right, #fcd34d, #fef3c7, #fcd34d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+       /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            /* Password screen */
+            .password-container {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            .password-title {
+                font-size: 2rem;
+            }
+            .password-lyrics {
+                font-size: 1.1rem;
+                line-height: 2;
+            }
+            .password-icon {
+                font-size: 3.5rem;
+            }
+
+            /* Walk-in silhouettes */
+            .silhouette {
+                width: 80px;
+                height: 140px;
+            }
+            @keyframes walkInLeft {
+                0% { left: -100px; opacity: 0; }
+                20% { opacity: 1; }
+                100% { left: calc(50% - 50px); opacity: 1; }
+            }
+            @keyframes walkInRight {
+                0% { right: -100px; opacity: 0; }
+                20% { opacity: 1; }
+                100% { right: calc(50% - 50px); opacity: 1; }
+            }
+            .boy-silhouette.holding { left: calc(50% - 50px); }
+            .girl-silhouette.holding { right: calc(50% - 50px); }
+
+            /* Hero */
+            .hero {
+                padding: 5rem 1.5rem 2rem;
+            }
+            .hero-title {
+                font-size: clamp(2.2rem, 9vw, 3.5rem);
+            }
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+
+            /* Timeline */
+            .timeline-line {
+                left: 1.5rem;
+            }
+            .memory-card.left,
+            .memory-card.right {
+                padding-left: 3.5rem !important;
+                padding-right: 0.75rem !important;
+                transform: translateX(-20px) !important;
+            }
+            .memory-card.visible {
+                transform: translateX(0) !important;
+            }
+            .memory-marker {
+                left: calc(1.5rem - 20px) !important;
+                right: auto !important;
+            }
+            .memory-inner {
+                padding: 1.25rem;
+            }
+            .memory-title {
+                font-size: 1.1rem;
+            }
+
+            /* Drag scene */
+            .drag-scene {
+                padding: 1.5rem 1rem;
+                gap: 1rem;
+            }
+            .hand-top, .hand-bottom svg {
+                width: 110px;
+                height: 110px;
+            }
+            .drop-zone {
+                width: 140px;
+                height: 140px;
+            }
+            .drag-text {
+                font-size: 1.3rem;
+            }
+
+            /* Footer */
+            .footer {
+                padding: 4rem 1.5rem;
+            }
+            .footer-text {
+                font-size: 1.8rem;
+            }
+            .footer-subtext {
+                font-size: 2.2rem;
+            }
+
+            /* Modal */
+            .modal-card {
+                padding: 2rem 1.5rem;
+            }
+            .modal-title {
+                font-size: 2rem;
+            }
+
+            /* Note button */
+            .note-btn {
+                margin: 2rem auto;
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .password-title { font-size: 1.7rem; }
+            .hero-title { font-size: 2rem; }
+            .hand-top, .hand-bottom svg { width: 90px; height: 90px; }
+            .drop-zone { width: 115px; height: 115px; }
+            .drag-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============ PASSWORD SCREEN ============ -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-container">
+            <div class="password-icon">🌙</div>
+            <h1 class="password-title">It's OUR STORY</h1>
+            <p class="password-lyrics">
+                "Tum hi ho, ab tum hi ho<br>
+                Zindagi ab tum hi ho<br>
+                Chain bhi, mera dard bhi<br>
+                Meri <span class="blank" contenteditable="true" id="lyricBlank"></span> ab tum hi ho.."
+            </p>
+            <input 
+                type="text" 
+                class="password-input" 
+                id="passwordInput" 
+                placeholder="fill the blank..."
+                autocomplete="off"
+            >
+            <br>
+            <button class="password-btn" id="passwordBtn">Enter Our World ✨</button>
+            <p class="password-error" id="passwordError"></p>
+        </div>
+    </div>
+
+    <!-- ============ WALK-IN SCENE ============ -->
+    <div class="walkin-scene" id="walkinScene">
+        <!-- Boy silhouette (SVG inline) -->
+        <svg id="boySilhouette" class="silhouette boy-silhouette" viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="boyGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#fcd34d" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <!-- Body glow -->
+            <ellipse cx="60" cy="110" rx="55" ry="100" fill="url(#boyGlow)"/>
+            <!-- Head -->
+            <circle cx="60" cy="28" r="22" fill="#1a1a3e" stroke="#fcd34d" stroke-width="1.5"/>
+            <!-- Hair -->
+            <path d="M38 20 Q60 5 82 20 Q80 8 60 6 Q40 8 38 20Z" fill="#fcd34d" opacity="0.9"/>
+            <!-- Neck -->
+            <rect x="52" y="48" width="16" height="14" rx="4" fill="#1a1a3e" stroke="#fcd34d" stroke-width="1"/>
+            <!-- Shoulders/Body -->
+            <path d="M20 70 Q25 55 60 58 Q95 55 100 70 L96 140 Q90 148 60 148 Q30 148 24 140Z" fill="#1a1a3e" stroke="#fcd34d" stroke-width="1.5"/>
+            <!-- Left arm -->
+            <path d="M24 75 Q12 95 14 125 Q16 135 22 138" stroke="#fcd34d" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <!-- Right arm (reaching out) -->
+            <path d="M96 75 Q110 95 108 125 Q106 138 100 142" stroke="#fcd34d" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <!-- Legs -->
+            <path d="M40 148 Q36 180 34 210" stroke="#fcd34d" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <path d="M80 148 Q84 180 86 210" stroke="#fcd34d" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <!-- Sparkles -->
+            <circle cx="15" cy="60" r="2" fill="#fcd34d" opacity="0.6">
+                <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="105" cy="45" r="1.5" fill="#fcd34d" opacity="0.4">
+                <animate attributeName="opacity" values="0.4;0;0.4" dur="2.5s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+
+        <!-- Girl silhouette (SVG inline) -->
+        <svg id="girlSilhouette" class="silhouette girl-silhouette" viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="girlGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+            <!-- Body glow -->
+            <ellipse cx="60" cy="110" rx="55" ry="100" fill="url(#girlGlow)"/>
+            <!-- Head -->
+            <circle cx="60" cy="28" r="21" fill="#1a1a3e" stroke="#d4b4fe" stroke-width="1.5"/>
+            <!-- Long flowing hair -->
+            <path d="M39 18 Q30 40 32 75 Q36 80 40 75 Q38 50 42 22Z" fill="#d4b4fe" opacity="0.85"/>
+            <path d="M81 18 Q90 40 88 75 Q84 80 80 75 Q82 50 78 22Z" fill="#d4b4fe" opacity="0.85"/>
+            <path d="M39 18 Q60 5 81 18 Q78 6 60 4 Q42 6 39 18Z" fill="#d4b4fe" opacity="0.9"/>
+            <!-- Neck -->
+            <rect x="53" y="47" width="14" height="13" rx="4" fill="#1a1a3e" stroke="#d4b4fe" stroke-width="1"/>
+            <!-- Dress/Body -->
+            <path d="M28 68 Q30 55 60 57 Q90 55 92 68 L100 145 Q90 160 60 162 Q30 160 20 145Z" fill="#1a1a3e" stroke="#d4b4fe" stroke-width="1.5"/>
+            <!-- Dress skirt flare -->
+            <path d="M20 145 Q10 165 14 185 Q30 175 60 178 Q90 175 106 185 Q110 165 100 145 Q90 160 60 162 Q30 160 20 145Z" fill="#1a1a3e" stroke="#d4b4fe" stroke-width="1" opacity="0.9"/>
+            <!-- Left arm (reaching out) -->
+            <path d="M28 72 Q14 92 12 122 Q14 134 20 138" stroke="#d4b4fe" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <!-- Right arm -->
+            <path d="M92 72 Q106 92 108 118 Q106 130 100 136" stroke="#d4b4fe" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.8"/>
+            <!-- Legs -->
+            <path d="M44 180 Q42 195 40 212" stroke="#d4b4fe" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.7"/>
+            <path d="M76 180 Q78 195 80 212" stroke="#d4b4fe" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.7"/>
+            <!-- Moon accessory -->
+            <path d="M72 20 Q80 16 80 24 Q76 20 72 20Z" fill="#fcd34d" opacity="0.9"/>
+            <!-- Sparkles -->
+            <circle cx="105" cy="58" r="2" fill="#d4b4fe" opacity="0.6">
+                <animate attributeName="opacity" values="0.6;0;0.6" dur="1.8s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="14" cy="48" r="1.5" fill="#d4b4fe" opacity="0.4">
+                <animate attributeName="opacity" values="0.4;0;0.4" dur="2.3s" repeatCount="indefinite"/>
+            </circle>
+        </svg>
+
+        <div class="hand-spark" id="handSpark"></div>
+    </div>
+
+    <!-- ============ VIDEO REVEAL ============ -->
+    <div class="video-reveal" id="videoReveal">
+        <div class="video-container" id="videoContainer">
+            <div class="glow-border"></div>
+            <video 
+                class="story-video" 
+                id="storyVideo" 
+                src="photos/video.mp4" 
+                controls
+                preload="auto"
+            ></video>
+        </div>
+        <button class="play-btn" id="playBtn">✨ Play Our Story ✨</button>
+    </div>
+
+    <!-- ============ DRAG & DROP HAND SCENE ============ -->
+    <div class="drag-scene" id="dragScene">
+        <!-- Galaxy canvas background -->
+        <canvas id="galaxyCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+
+        <!-- Star (his) — the drop zone -->
+        <div class="drop-zone" id="dropZone" style="position:relative;z-index:2;">
+            <svg id="starIcon" class="hand-top" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#fef9c3"/>
+                        <stop offset="40%" stop-color="#fcd34d"/>
+                        <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.4"/>
+                    </radialGradient>
+                    <filter id="starBlur">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                <circle cx="75" cy="75" r="60" fill="#fcd34d" opacity="0.06"/>
+                <polygon points="75,10 88,52 132,52 98,77 110,120 75,95 40,120 52,77 18,52 62,52" fill="url(#starGlow)" filter="url(#starBlur)" stroke="#fef08a" stroke-width="1.5"/>
+                <polygon points="75,22 85,50 114,50 91,67 100,96 75,79 50,96 59,67 36,50 65,50" fill="#fef9c3" opacity="0.9"/>
+                <circle cx="75" cy="75" r="8" fill="white" opacity="0.8">
+                    <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+            <div class="drop-hint-text">— me —</div>
+        </div>
+
+        <p class="drag-text" id="dragText">
+            "Am I lucky enough to hold you again?"<br>
+            <small>(if yes, drag the moon and place it near me ✨)</small>
+        </p>
+
+        <!-- Moon (hers) — draggable -->
+        <div id="handBottom" class="hand-bottom" draggable="true" style="position:relative;z-index:2;">
+            <svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:150px;">
+                <defs>
+                    <radialGradient id="moonGlow" cx="40%" cy="40%" r="60%">
+                        <stop offset="0%" stop-color="#f0e6ff"/>
+                        <stop offset="50%" stop-color="#c4b5fd"/>
+                        <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.3"/>
+                    </radialGradient>
+                    <filter id="moonBlur">
+                        <feGaussianBlur stdDeviation="4" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                <circle cx="75" cy="75" r="62" fill="#a78bfa" opacity="0.08"/>
+                <!-- Moon crescent shape -->
+                <path d="M75 15 A60 60 0 1 1 75 135 A40 40 0 1 0 75 15Z" fill="url(#moonGlow)" filter="url(#moonBlur)" stroke="#e9d5ff" stroke-width="1.5"/>
+                <!-- Moon craters -->
+                <circle cx="90" cy="55" r="7" fill="#ddd6fe" opacity="0.4"/>
+                <circle cx="72" cy="95" r="5" fill="#ddd6fe" opacity="0.3"/>
+                <circle cx="105" cy="80" r="4" fill="#ddd6fe" opacity="0.25"/>
+                <!-- Glow center -->
+                <circle cx="72" cy="68" r="10" fill="white" opacity="0.5">
+                    <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+            <div class="drop-hint-text" style="color:#c4b5fd;">— you —</div>
+        </div>
+        <!-- No Need button -->
+        <button id="noNeedBtn" onclick="handleNoNeed()" style="
+            margin-top: 2.5rem;
+            padding: 0.55rem 2rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.25);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        " onmouseover="this.style.color='rgba(255,255,255,0.45)';this.style.borderColor='rgba(255,255,255,0.2)'"
+        onmouseout="this.style.color='rgba(255,255,255,0.25)';this.style.borderColor='rgba(255,255,255,0.1)'">
+            no need
+        </button>
+
+        <!-- Sinhala message box -->
+        <div id="noNeedMsg" style="
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.92);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 2rem;
+        ">
+            <div style="
+                max-width: 480px;
+                width: 90%;
+                background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
+                border: 1px solid rgba(239,68,68,0.2);
+                border-radius: 1.5rem;
+                padding: 2.5rem 2rem;
+                text-align: center;
+                position: relative;
+            ">
+                <!-- Top glow line -->
+                <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,rgba(239,68,68,0.4),transparent);border-radius:1.5rem 1.5rem 0 0;"></div>
+                
+                <div style="font-size:3rem;margin-bottom:1rem;">😔</div>
+                
+                <p style="
+                    font-family: 'Dancing Script', cursive;
+                    font-size: 1.55rem;
+                    color: #fca5a5;
+                    line-height: 1.9;
+                    font-style: italic;
+                    margin-bottom: 2rem;
+                ">
+                    "mm it's ok.. mn oyawa<br>dala ynne na moda bathaliii"
+                </p>
+
+                <button onclick="handleNoNeedRedirect()" style="
+                    padding: 0.7rem 2.5rem;
+                    background: transparent;
+                    border: 1px solid rgba(252,211,77,0.25);
+                    color: rgba(252,211,77,0.7);
+                    font-family: 'Playfair Display', serif;
+                    font-size: 1rem;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    letter-spacing: 0.05em;
+                " onmouseover="this.style.borderColor='rgba(252,211,77,0.5)';this.style.color='rgba(252,211,77,1)'"
+                onmouseout="this.style.borderColor='rgba(252,211,77,0.25)';this.style.color='rgba(252,211,77,0.7)'">
+                    show the memories
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ FIREWORKS CANVAS ============ -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <div class="main-content" id="mainContent">
+        <!-- Starfield -->
+        <canvas id="starfield"></canvas>
+
+        <!-- Hero -->
+        <header class="hero" id="hero">
+            <h1 class="hero-title">The Story of a<br>Moon & a Star</h1>
+            <p class="hero-subtitle">"Late-night whispers turned into forever"</p>
+        </header>
+
+        <!-- Timeline -->
+        <div class="timeline" id="timeline">
+            <div class="timeline-line"></div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">✨</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">When We Had A Crush On Each Other</h3>
+                            <p class="memory-date">Jan 2023 · Sooriyakanda</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/sXfcwL7K/IMG-20230116-094710-2.jpg" class="memory-image">
+                    <p class="memory-desc">The days when our eyes started contact and our story began. Little did we know this chance encounter would change our lives...</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💌</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First Love Letters</h3>
+                            <p class="memory-date">March 2023</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/rmVh33GK/331622121-508729754795540-1572049516273367857-n.jpg" class="memory-image">
+                    <p class="memory-desc">Don't wanna lie, I was super scared before I sent you the letter. But as I wished, U sent me a reply... And that was the time which made some sense. Btw, we couldn't reach each other til June :]</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">❤️</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">❤️ DAY THAT CHANGED EVERYTHING ❤️</h3>
+                            <p class="memory-date">June 25, 2023 · Kandy</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/cJ3MxnNq/IMG-20230627-084049.jpg" class="memory-image">
+                    <p class="memory-desc">Started our conversation just by exchanging a wrist band.. Don't know how to explain this day cuz the words aren't enough!!!! Still remember every single word we spoke that night, and I hope you will remember too...</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💛</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First "I Love You ❤️"</h3>
+                            <p class="memory-date">July 23, 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🤝</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First Time We Held Our Hands</h3>
+                            <p class="memory-date">July 30, 2023 · Jaffna</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/Bnj79bYD/Snapchat-426078443.jpg" class="memory-image">
+                    <p class="memory-desc">Though you were sleeping on our first day, I was holding your hand along the whole night... but on this day you took my hand and held it so tightly, just as I wished.</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">😂</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Sneakin' Around 😂</h3>
+                            <p class="memory-date">Oct 01, 2023</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/FHVtJCdc/IMG-20240113-WA0048.jpg" class="memory-image">
+                    <p class="memory-desc">We were like Romeo & Juliet lol 😂... You were there in the balcony and we both were staring at each other for a little while ❤️</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎬</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Cinema Night</h3>
+                            <p class="memory-date">Nov 25, 2023</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">I'd been watching you all night!!! It was almost 5 months for our relationship then...</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎄</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">My Christmas Wish 🎄✨</h3>
+                            <p class="memory-date">Dec 28, 2023</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/bJR4ZV2k/IMG-20231229-010410.jpg" class="memory-image">
+                    <p class="memory-desc">Got together at my house for Christmas, and I was able to see my own Christmas Wish 😉🎄</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🤗</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First Hug ❤️</h3>
+                            <p class="memory-date">Jan 14, 2024 · Ella</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/nVm4q7sC/IMG-20240115-021555.jpg" class="memory-image">
+                    <p class="memory-desc">New Year, New try nah?? 🌝 ;)</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">😭</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">The TikTok Problem</h3>
+                            <p class="memory-date">Early 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Your dad saw some tiktoks on our chat and things started to get kinda chaotic 😭 Remember we couldn't chat as we used to do and drifted a little bit apart from each other.. Don't wanna lie I'm still scared of those days 😖</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌿</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Together Again After a Little While</h3>
+                            <p class="memory-date">April 22, 2024 · Deniyaya</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/4xXCgh2m/IMG-20240422-150336.jpg" class="memory-image">
+                    <p class="memory-desc">After some silent nights, we got each other's back again... This was the only trip we acted so innocently. Also the last time together before we broke up 🥲</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💔</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">The Dark Season Begins 😭</h3>
+                            <p class="memory-date">May 7, 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">The day everything changed. Caught in an SMS chat, but managed to be together though we were forced to be apart 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎂</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">On Your Bday!!!</h3>
+                            <p class="memory-date">May 30, 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Remember I came to see you on your birthday??? 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">❤️‍🩹</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">1 Year Anniversary ❤️‍🩹</h3>
+                            <p class="memory-date">June 25, 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Celebrated our 1 Year Anniversary, a little bit peacefully...</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌧️</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Hardest Goodbye 😭</h3>
+                            <p class="memory-date">July 24, 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Don't wanna talk about those times... Just some BAD DAYS :(</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌧️</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Silent Days 😖</h3>
+                            <p class="memory-date">Aug – Dec 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Rare messages & lonely moments... The time we exchanged some little gifts we planned to give before 😖</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">❤️‍🩹</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First Meet After the Break Up</h3>
+                            <p class="memory-date">Sep 21, 2024</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">How many things we had to talk on that night nah?? but we were not the same at all right, we both knew it... 😖 You said I've changed, and yes I may have, but my feelings were the same. Btw, you gave me the wrist band on this day.</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌅</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Love Again??? ❤️‍🩹</h3>
+                            <p class="memory-date">Dec 15, 2024</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/d3CTF0tV/2024-12-16-08-34-IMG-3083.jpg" class="memory-image">
+                    <p class="memory-desc">After months of silence, your voice again... Started to hang out often again ❤️‍🩹</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌈</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Rebuilding Trust ❤️‍🩹</h3>
+                            <p class="memory-date">Dec 26, 2024</p>
+                        </div>
+                    </div>
+                    <img src="photos\2024_12_26_11_40_IMG_3429.JPG" class="memory-image">
+                    <p class="memory-desc">Started to share our lives again after the long separation... And I'll always remember the snap you sent me wearing the necklace I gave 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎉</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">MINE AGAIN!!!! ❤️</h3>
+                            <p class="memory-date">Jan 1, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Wished me on my Bday saying "HAPPY BDAY LOVE ❤️", and started the affair again... never gonna forget this day.. ;)</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💕</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">FIRST KISS 💕</h3>
+                            <p class="memory-date">Jan 20, 2025 · Dambulla</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/KctVcSp1/2025-01-20-00-07-IMG-4578.jpg" class="memory-image">
+                    <p class="memory-desc">HAD OUR VERY FIRST KISS... Don't wanna lie, your lips are so kissable 🥹❤️</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">📱</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Video Call After a Long Time</h3>
+                            <p class="memory-date">Jan 30, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_01_30_14_27_IMG_4967.PNG" class="memory-image">
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💝</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Valentines ❤️</h3>
+                            <p class="memory-date">Feb 14, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Day I gave you two keytags and your name was on it (Also we had an unforgettable argument right 😂)</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🏃</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Came to See You on SportsMeet</h3>
+                            <p class="memory-date">Feb 20, 2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🚌</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Hanging Out in the Bus</h3>
+                            <p class="memory-date">April 03, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Planned and just met in a bus 😂 Never thought it would be that easy 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">😚</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Backdoor Kisses 😚</h3>
+                            <p class="memory-date">April 19, 2025</p>
+                        </div>
+                    </div>
+                    <img src="https://i.postimg.cc/jdTyTfk8/Whats-App-Image-2025-05-15-at-11-50-06.jpg" class="memory-image">
+                    <p class="memory-desc">Kinda tasted each other's tongues for the first time ever nah 😂❤️... Still feel like those 2-3 minutes were a miracle that night 😭</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎂</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">On Your Birthday ❤️</h3>
+                            <p class="memory-date">May 30, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Day you got a guitar as your Bday gift 🥳</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌙</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Our Infinity in that one Eve 🥹💕</h3>
+                            <p class="memory-date">June 08, 2025 · 18:43 · Belihul Oya</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_06_08_18_40_IMG_7472.JPG" class="memory-image">
+                    <p class="memory-desc">We kissed like we could hide inside each other's lips, like the world stopped just to watch us 🥹. Hugged, tangled, lost in each other's eyes just as I prayed the day before ✨💫 Just ME, U & THE MOON 🌝💖</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎊</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">❤️ 2 Years Anniversary ❤️</h3>
+                            <p class="memory-date">June 25, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">It was a Wednesday and you had classes. After you came home, we texted the whole night and you lied to your mom about an essay... remember??? 😂 You risked yourself just to talk with me 🥹❤️</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">⚠️</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">*HACKED*</h3>
+                            <p class="memory-date">July 04, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">I got hacked and lost control of all my accounts! After a while I got them back.</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">📱</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Video Calls</h3>
+                            <p class="memory-date">July 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_07_15_18_22_IMG_8400.PNG" class="memory-image">
+                    <p class="memory-desc">Forgetting about the distance by just staring at each other 😚</p>
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌧️</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Lost Your TikTok</h3>
+                            <p class="memory-date">July 24, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">You lost your TikTok account by doing unusual stupid stuff. I'm not gonna forget this!</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🚌</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">On the Bus... 🚌</h3>
+                            <p class="memory-date">July 25, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_07_25_16_09_IMG_8704.JPG" class="memory-image">
+                    <p class="memory-desc">Just a little ride together, holding our hands 👩🏻‍❤️‍💋‍👨🏻</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎤</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Meri Aashiqui ❤️</h3>
+                            <p class="memory-date">July 30, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_07_30_22_11_IMG_8819.JPG" class="memory-image">
+                    <p class="memory-desc">You won semi finals and were selected for the finals in the singing competition 🎤</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🏆</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">All Island Champion 🏆</h3>
+                            <p class="memory-date">Aug 16, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_08_20_21_04_IMG_9122.JPG" class="memory-image">
+                    <p class="memory-desc">You won 1st place from the whole island 🏆🏆. You sang 'Sunn Raha Hai' and I still keep the recording til I die... So proud to be your bf 🥹❤️</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌊</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Away in Weligama 📷</h3>
+                            <p class="memory-date">Aug 25, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_08_25_00_40_IMG_9245.PNG" class="memory-image">
+                    <p class="memory-desc">Took a video call after a long time, you were in Weligama. Meli was beside you and you showed me to her. You wrote 'Vish' on the sands... we just stared at each other 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🏨</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Moments at Habarana</h3>
+                            <p class="memory-date">Oct 5, 6, 7 · 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_10_05_00_09_IMG_0216.JPG" class="memory-image">
+                    <p class="memory-desc">We kissed like never before, while watching Aashiqui. We played hide & seek, and remember you bit my neck lol... this was the last time we were together like that for 2025 🥹</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">📷</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Randoms 📷</h3>
+                            <p class="memory-date">Oct 26, 2025</p>
+                        </div>
+                    </div>
+                    <img src="photos\2025_10_26_22_25_IMG_1159.JPG" class="memory-image">
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">💔</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">💔</h3>
+                            <p class="memory-date">Nov 11, 2025</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Don't wanna talk about...</p>
+                </div>
+            </div>
+
+            <div class="memory">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🎂</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">Bday Wish</h3>
+                            <p class="memory-date">Jan 31, 2026</p>
+                        </div>
+                    </div>
+                    <img src="photos\620559803_1217903700439874_5195218068225256325_n.JPG" class="memory-image">
+                </div>
+            </div>
+
+            <div class="memory dark-card">
+                <div class="memory-content">
+                    <div class="memory-header">
+                        <div class="memory-icon">🌱</div>
+                        <div class="memory-header-text">
+                            <h3 class="memory-title">First Time in 2026</h3>
+                            <p class="memory-date">May 02, 2026</p>
+                        </div>
+                    </div>
+                    <p class="memory-desc">Still can't believe that I kissed you, and you held my hand...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Surprise Note Button -->
+        <button class="note-btn" id="noteBtn">A Little Note For You ❤️</button>
+
+        <!-- Footer -->
+        <footer class="footer" id="footer">
+            <p class="footer-text">Even when the night changes,</p>
+            <p class="footer-subtext">It will never change Me & You ❤️</p>
+        </footer>
+    </div>
+
+    <!-- Note Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <h2 class="modal-title">To My Bunny 🐰</h2>
+            <p class="modal-text">
+                As I always say, EVERYTHING'S GONNA BE ALRIGHT and NO MATTER WHAT HAPPENS, I'M ALWAYS HERE FOR U right 🥹
+                <br><br>
+                YOU'LL ALWAYS BE 'MERI AASHIQUE' 🌙❤️ I LOVE U SO MUCH SUDUUU
+                <br><br>
+                With all my love, FOREVER & AGAIN
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ============ CONSTANTS ============
+        const CORRECT_PASSWORD = 'aashiqui';
+
+        // ============ DOM ELEMENTS ============
+        const passwordScreen = document.getElementById('passwordScreen');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordBtn = document.getElementById('passwordBtn');
+        const passwordError = document.getElementById('passwordError');
+        const lyricBlank = document.getElementById('lyricBlank');
+
+        const walkinScene = document.getElementById('walkinScene');
+        const boySilhouette = document.getElementById('boySilhouette');
+        const girlSilhouette = document.getElementById('girlSilhouette');
+        const handSpark = document.getElementById('handSpark');
+
+        const videoReveal = document.getElementById('videoReveal');
+        const videoContainer = document.getElementById('videoContainer');
+        const storyVideo = document.getElementById('storyVideo');
+        const playBtn = document.getElementById('playBtn');
+
+        const dragScene = document.getElementById('dragScene');
+        const dropZone = document.getElementById('dropZone');
+        const handBottom = document.getElementById('handBottom');
+        const handTop = document.getElementById('handTop');
+        const dragText = document.getElementById('dragText');
+
+        const fireworksCanvas = document.getElementById('fireworksCanvas');
+        const fireworksCtx = fireworksCanvas.getContext('2d');
+
+        const mainContent = document.getElementById('mainContent');
+        const starfieldCanvas = document.getElementById('starfield');
+        const starfieldCtx = starfieldCanvas.getContext('2d');
+        const hero = document.getElementById('hero');
+        const footer = document.getElementById('footer');
+
+        const noteBtn = document.getElementById('noteBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalClose = document.getElementById('modalClose');
+
+        // ============ PASSWORD LOGIC ============
+        function attemptUnlock() {
+            const entered = passwordInput.value.trim().toLowerCase();
+            if (entered === CORRECT_PASSWORD) {
+                passwordError.textContent = '';
+                startWalkInAnimation();
+            } else {
+                passwordError.textContent = 'Not quite... Listen to the song again 🎵';
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+
+        passwordBtn.addEventListener('click', attemptUnlock);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') attemptUnlock();
+        });
+
+        // Focus the blank in lyrics
+        lyricBlank.addEventListener('click', () => {
+            passwordInput.focus();
+        });
+
+        // ============ WALK-IN ANIMATION ============
+        function startWalkInAnimation() {
+            // Hide password screen
+            passwordScreen.classList.add('hidden');
+            
+            // Show walkin scene
+            walkinScene.classList.add('active');
+            
+            // Start walking animations
+            setTimeout(() => {
+                boySilhouette.classList.add('walking');
+                girlSilhouette.classList.add('walking');
+            }, 300);
+
+            // After walking animation completes (2.5s), they hold hands
+            setTimeout(() => {
+                boySilhouette.classList.add('holding');
+                girlSilhouette.classList.add('holding');
+                handSpark.classList.add('active');
+                
+                // After spark, reveal video
+                setTimeout(() => {
+                    revealVideo();
+                }, 800);
+            }, 2800);
+        }
+
+        // ============ VIDEO REVEAL ============
+        function revealVideo() {
+            walkinScene.classList.add('hidden');
+            videoReveal.classList.add('active');
+            
+            setTimeout(() => {
+                videoContainer.classList.add('active');
+            }, 300);
+        }
+
+        playBtn.addEventListener('click', () => {
+            storyVideo.play().catch(err => console.log('Playback error:', err));
+            playBtn.textContent = '✨ Watching... ✨';
+            playBtn.style.opacity = '0.5';
+            playBtn.style.pointerEvents = 'none';
+        });
+
+        // When video ends
+        storyVideo.addEventListener('ended', () => {
+            videoReveal.classList.remove('active');
+            videoContainer.classList.remove('active');
+            
+            // Show drag scene after fade
+            setTimeout(() => {
+                showDragScene();
+            }, 800);
+        });
+
+        // Allow skipping if she clicks video controls
+        storyVideo.addEventListener('pause', () => {
+            if (storyVideo.currentTime > storyVideo.duration - 1) {
+                // Near the end, treat as ended
+                videoReveal.classList.remove('active');
+                videoContainer.classList.remove('active');
+                setTimeout(() => showDragScene(), 800);
+            }
+        });
+
+        // ============ DRAG & DROP SCENE ============
+        function showDragScene() {
+            dragScene.classList.add('active');
+            initGalaxyCanvas();
+            initDragDrop();
+        }
+
+        // Galaxy background canvas
+        function initGalaxyCanvas() {
+            const gc = document.getElementById('galaxyCanvas');
+            if (!gc) return;
+            gc.width = window.innerWidth;
+            gc.height = window.innerHeight;
+            const gx = gc.getContext('2d');
+            const gStars = [];
+            for (let i = 0; i < 320; i++) {
+                gStars.push({
+                    x: Math.random() * gc.width,
+                    y: Math.random() * gc.height,
+                    r: Math.random() * 1.8 + 0.2,
+                    op: Math.random() * 0.7 + 0.2,
+                    speed: Math.random() * 0.004 + 0.001,
+                    hue: Math.random() > 0.8 ? 260 : 50
+                });
+            }
+            // Nebula clouds
+            function drawNebula() {
+                const grad1 = gx.createRadialGradient(gc.width*0.3, gc.height*0.4, 0, gc.width*0.3, gc.height*0.4, gc.width*0.35);
+                grad1.addColorStop(0, 'rgba(80,20,180,0.18)');
+                grad1.addColorStop(1, 'rgba(0,0,0,0)');
+                gx.fillStyle = grad1;
+                gx.fillRect(0, 0, gc.width, gc.height);
+
+                const grad2 = gx.createRadialGradient(gc.width*0.7, gc.height*0.6, 0, gc.width*0.7, gc.height*0.6, gc.width*0.3);
+                grad2.addColorStop(0, 'rgba(180,80,20,0.12)');
+                grad2.addColorStop(1, 'rgba(0,0,0,0)');
+                gx.fillStyle = grad2;
+                gx.fillRect(0, 0, gc.width, gc.height);
+            }
+            function animateGalaxy() {
+                gx.clearRect(0, 0, gc.width, gc.height);
+                drawNebula();
+                gStars.forEach(s => {
+                    s.op += Math.sin(Date.now() * s.speed) * 0.005;
+                    s.op = Math.max(0.1, Math.min(0.9, s.op));
+                    gx.beginPath();
+                    gx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                    gx.fillStyle = s.hue === 260
+                        ? `rgba(196,181,253,${s.op})`
+                        : `rgba(252,211,77,${s.op * 0.7})`;
+                    gx.fill();
+                });
+                requestAnimationFrame(animateGalaxy);
+            }
+            animateGalaxy();
+        }
+
+        function initDragDrop() {
+            // Make bottom hand draggable
+            handBottom.addEventListener('dragstart', handleDragStart);
+            handBottom.addEventListener('dragend', handleDragEnd);
+            
+            // Make drop zone accept drops
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragenter', handleDragEnter);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+            
+            // Touch events for mobile
+            handBottom.addEventListener('touchstart', handleTouchStart);
+            handBottom.addEventListener('touchmove', handleTouchMove);
+            handBottom.addEventListener('touchend', handleTouchEnd);
+        }
+
+        // Desktop Drag Events
+        function handleDragStart(e) {
+            handBottom.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', 'hand');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            handBottom.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            dropZone.classList.add('highlight');
+            handBottom.classList.add('over-target');
+        }
+
+        function handleDragLeave(e) {
+            dropZone.classList.remove('highlight');
+            handBottom.classList.remove('over-target');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            dropZone.classList.remove('highlight');
+            handBottom.classList.remove('over-target');
+            handBottom.classList.remove('dragging');
+            
+            // Hands connected!
+            onHandsConnected();
+        }
+
+        // Mobile Touch Events
+        let touchStartY = 0;
+        let touchHandY = 0;
+        let isTouching = false;
+
+        function handleTouchStart(e) {
+            isTouching = true;
+            const touch = e.touches[0];
+            touchStartY = touch.clientY;
+            touchHandY = handBottom.getBoundingClientRect().top;
+            handBottom.style.transition = 'none';
+            handBottom.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            if (!isTouching) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            const deltaY = touch.clientY - touchStartY;
+            handBottom.style.transform = `translateY(${deltaY}px)`;
+            
+            // Check if over drop zone
+            const handRect = handBottom.getBoundingClientRect();
+            const zoneRect = dropZone.getBoundingClientRect();
+            const handCenter = handRect.top + handRect.height / 2;
+            
+            if (handCenter < zoneRect.bottom && handCenter > zoneRect.top) {
+                dropZone.classList.add('highlight');
+                handBottom.classList.add('over-target');
+            } else {
+                dropZone.classList.remove('highlight');
+                handBottom.classList.remove('over-target');
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!isTouching) return;
+            isTouching = false;
+            
+            const handRect = handBottom.getBoundingClientRect();
+            const zoneRect = dropZone.getBoundingClientRect();
+            const handCenter = handRect.top + handRect.height / 2;
+            
+            handBottom.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            handBottom.style.transform = 'translateY(0)';
+            handBottom.classList.remove('dragging');
+            dropZone.classList.remove('highlight');
+            handBottom.classList.remove('over-target');
+            
+            if (handCenter < zoneRect.bottom && handCenter > zoneRect.top) {
+                // Hands connected!
+                onHandsConnected();
+            }
+        }
+
+        // ============ NO NEED HANDLER ============
+        function handleNoNeed() {
+            // Save her answer
+            saveHerAnswer('NO');
+
+            // Show the message box
+            const msg = document.getElementById('noNeedMsg');
+            msg.style.display = 'flex';
+            // Small delay then fade in
+            requestAnimationFrame(() => {
+                msg.style.opacity = '0';
+                msg.style.transition = 'opacity 0.6s ease';
+                requestAnimationFrame(() => { msg.style.opacity = '1'; });
+            });
+        }
+
+        function handleNoNeedRedirect() {
+            const msg = document.getElementById('noNeedMsg');
+            msg.style.opacity = '0';
+            setTimeout(() => {
+                msg.style.display = 'none';
+                // Hide drag scene and go straight to memories
+                dragScene.classList.remove('active');
+                showMainContent();
+            }, 600);
+        }
+
+        // ============ HANDS CONNECTED ============
+        function onHandsConnected() {
+            dropZone.classList.add('connected');
+            dragText.innerHTML = '"Forever and again... ❤️"';
+            dragText.style.color = 'var(--gold-light)';
+            handBottom.style.opacity = '0';
+            handBottom.style.pointerEvents = 'none';
+            
+            // Save answer (console + optional text file)
+            saveHerAnswer('YES');
+            
+            // Start fireworks after a brief moment
+            setTimeout(() => {
+                dragScene.classList.add('celebrating');
+                startFireworks();
+            }, 600);
+
+            // After fireworks, show timeline
+            setTimeout(() => {
+                dragScene.classList.remove('active');
+                dragScene.classList.remove('celebrating');
+                fireworksCanvas.classList.remove('active');
+                showMainContent();
+            }, 7000);
+        }
+
+        // ============ EMAILJS CONFIG ============
+        const EJS_SERVICE  = 'service_f16feyh';   // e.g. service_abc123
+        const EJS_TEMPLATE = 'template_dzgxeli';  // e.g. template_abc123
+        const EJS_KEY      = 'h_N2gRjh07XDEnVLJ';   // e.g. xAbC123xyz
+
+        emailjs.init(EJS_KEY);
+
+        function saveHerAnswer(answerText) {
+            const time = new Date().toLocaleString('en-LK', { timeZone: 'Asia/Colombo' });
+            const msg = answerText === 'YES'
+                ? 'She dragged the moon to your star! 🌙✨'
+                : 'She clicked No Need... 💔';
+
+            emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+                answer:  answerText === 'YES' ? 'YES ❤️' : 'No Need 💔',
+                time:    time,
+                message: msg
+            })
+            .then(() => console.log('✅ Email sent!'))
+            .catch(e => console.log('❌ Email error:', e));
+
+            console.log('Answer recorded:', answerText, time);
+        }
+
+        // ============ FIREWORKS ============
+        let fireworksParticles = [];
+        let fireworksAnimationId;
+
+        function resizeFireworksCanvas() {
+            fireworksCanvas.width = window.innerWidth;
+            fireworksCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeFireworksCanvas);
+        resizeFireworksCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 8,
+                    y: (Math.random() - 0.5) * 8 - 2
+                };
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.005;
+                this.size = Math.random() * 3 + 1;
+                this.gravity = 0.04;
+            }
+
+            update() {
+                this.velocity.y += this.gravity;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createFirework(x, y) {
+            const colors = [
+                '#fcd34d', '#f59e0b', '#fbbf24', '#fef3c7',
+                '#ef4444', '#f87171', '#fb923c', '#f472b6',
+                '#a78bfa', '#818cf8', '#38bdf8', '#4ade80',
+                '#ffffff', '#fef08a', '#fda4af', '#d8b4fe'
+            ];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const particleCount = 60 + Math.random() * 40;
+            
+            for (let i = 0; i < particleCount; i++) {
+                fireworksParticles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            fireworksCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            
+            // Draw gradient background for celebration
+            const gradient = fireworksCtx.createRadialGradient(
+                fireworksCanvas.width / 2, fireworksCanvas.height / 2, 0,
+                fireworksCanvas.width / 2, fireworksCanvas.height / 2, fireworksCanvas.width * 0.7
+            );
+            gradient.addColorStop(0, 'rgba(26, 10, 46, 0.3)');
+            gradient.addColorStop(1, 'rgba(2, 6, 23, 0.1)');
+            fireworksCtx.fillStyle = gradient;
+            fireworksCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            
+            // Update and draw particles
+            fireworksParticles = fireworksParticles.filter(p => p.alpha > 0);
+            fireworksParticles.forEach(p => {
+                p.update();
+                p.draw(fireworksCtx);
+            });
+            
+            // Randomly create new fireworks
+            if (Math.random() < 0.15) {
+                const x = Math.random() * fireworksCanvas.width;
+                const y = Math.random() * fireworksCanvas.height * 0.6;
+                createFirework(x, y);
+            }
+            
+            fireworksAnimationId = requestAnimationFrame(animateFireworks);
+        }
+
+        function startFireworks() {
+            fireworksCanvas.classList.add('active');
+            
+            // Initial burst of fireworks
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const x = fireworksCanvas.width * (0.2 + Math.random() * 0.6);
+                    const y = fireworksCanvas.height * (0.1 + Math.random() * 0.4);
+                    createFirework(x, y);
+                }, i * 200);
+            }
+            
+            animateFireworks();
+        }
+
+        // ============ MAIN CONTENT (Timeline) ============
+        function showMainContent() {
+            mainContent.classList.add('visible');
+            document.body.style.overflow = 'auto';
+            
+            // Init starfield
+            initStarfield();
+            
+            // Trigger animations
+            setTimeout(() => {
+                hero.classList.add('visible');
+                checkMemoryVisibility();
+            }, 300);
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ============ STARFIELD ============
+        let stars = [];
+        let starfieldAnimationId;
+
+        function resizeStarfield() {
+            starfieldCanvas.width = window.innerWidth;
+            starfieldCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeStarfield);
+        resizeStarfield();
+
+        function createStars() {
+            stars = [];
+            for (let i = 0; i < 250; i++) {
+                stars.push({
+                    x: Math.random() * starfieldCanvas.width,
+                    y: Math.random() * starfieldCanvas.height,
+                    z: Math.random() * 1000,
+                    radius: 0.5 + Math.random() * 2,
+                    opacity: 0.2 + Math.random() * 0.6
+                });
+            }
+        }
+
+        function renderStars() {
+            starfieldCtx.clearRect(0, 0, starfieldCanvas.width, starfieldCanvas.height);
+            
+            const centerX = starfieldCanvas.width / 2;
+            const centerY = starfieldCanvas.height / 2;
+            
+            stars.forEach(star => {
+                const parallax = star.z / 1000;
+                star.x += (centerX - star.x) * parallax * 0.02;
+                star.y += (centerY - star.y) * parallax * 0.02;
+                
+                if (star.x < 0 || star.x > starfieldCanvas.width || 
+                    star.y < 0 || star.y > starfieldCanvas.height) {
+                    star.x = Math.random() * starfieldCanvas.width;
+                    star.y = Math.random() * starfieldCanvas.height;
+                }
+                
+                starfieldCtx.beginPath();
+                starfieldCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                starfieldCtx.fillStyle = `rgba(252, 211, 77, ${star.opacity})`;
+                starfieldCtx.fill();
+            });
+            
+            starfieldAnimationId = requestAnimationFrame(renderStars);
+        }
+
+        function initStarfield() {
+            createStars();
+            if (!starfieldAnimationId) {
+                renderStars();
+            }
+        }
+
+        // ============ SCROLL ANIMATIONS ============
+        function checkMemoryVisibility() {
+            const cards = document.querySelectorAll('.memory');
+            const windowHeight = window.innerHeight;
+            
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const cardMiddle = rect.top + rect.height / 2;
+                
+                if (cardMiddle < windowHeight * 0.85 && cardMiddle > -rect.height * 0.3) {
+                    card.classList.add('visible');
+                }
+            });
+            
+            if (hero.getBoundingClientRect().top < windowHeight * 0.8) {
+                hero.classList.add('visible');
+            }
+            if (footer.getBoundingClientRect().top < windowHeight * 0.8) {
+                footer.classList.add('visible');
+            }
+        }
+
+        window.addEventListener('scroll', checkMemoryVisibility);
+
+        // ============ NOTE MODAL ============
+        noteBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        modalClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+
+        // ============ INITIAL SETUP ============
+        createStars();
+        document.body.style.overflow = 'hidden';
+        passwordInput.focus();
+
+        // Prevent accidental scrolling during intro
+        document.addEventListener('wheel', (e) => {
+            if (!mainContent.classList.contains('visible')) {
+                // Allow scrolling only in main content
+            }
+        }, { passive: true });
+
+        console.log('🌙✨ Welcome to OUR STORY v3.0 ✨🌙');
+        console.log('Fill in the blank to begin... 🎵');
+    </script>
+</body>
+</html>
